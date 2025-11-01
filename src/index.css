@@ -1,0 +1,346 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Professional Tech Portfolio Design System */
+
+@layer base {
+  :root {
+    /* Light Mode - Clean, Professional with GIB Brand */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary - Golden Yellow (Professional) */
+    --primary: 45 95% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 45 95% 48%;
+    --primary-glow: 45 90% 60%;
+
+    /* Secondary - Professional Blue Accent */
+    --secondary: 205 80% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 30% 30%;
+
+    --accent: 45 95% 55%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 45 95% 55%;
+
+    --radius: 0.75rem;
+
+    /* Custom Portfolio Colors - Professional */
+    --gradient-start: 45 95% 55%;
+    --gradient-end: 205 80% 50%;
+    --hero-overlay: 222 47% 11% / 0.6;
+    --section-bg: 210 40% 98%;
+    --glow-yellow: 45 90% 60% / 0.2;
+    --glow-blue: 205 80% 50% / 0.2;
+  }
+
+  .dark {
+    /* Dark Mode - Professional Dark with Golden Yellow */
+    --background: 220 20% 10%;
+    --foreground: 0 0% 90%;
+
+    --card: 220 25% 15%;
+    --card-foreground: 0 0% 90%;
+
+    --popover: 220 25% 15%;
+    --popover-foreground: 0 0% 90%;
+
+    --primary: 45 95% 55%;
+    --primary-foreground: 222 47% 11%;
+    --primary-hover: 45 95% 48%;
+    --primary-glow: 45 90% 60%;
+
+    --secondary: 205 80% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 30% 18%;
+    --muted-foreground: 215 20% 70%;
+
+    --accent: 45 95% 55%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 90%;
+
+    --border: 220 25% 20%;
+    --input: 220 25% 20%;
+    --ring: 45 95% 55%;
+
+    --gradient-start: 45 95% 55%;
+    --gradient-end: 205 80% 50%;
+    --hero-overlay: 220 20% 10% / 0.75;
+    --section-bg: 220 18% 14%;
+    --glow-yellow: 45 90% 60% / 0.2;
+    --glow-blue: 205 80% 50% / 0.2;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-['Inter',sans-serif] antialiased;
+  }
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Apply smooth scrolling only to anchor links within the same page */
+html:not([data-scroll-instant]) {
+  scroll-behavior: smooth;
+}
+
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-6xl lg:text-7xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-4xl;
+  }
+}
+
+@layer utilities {
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  /* Gradient Background */
+  .gradient-bg {
+    @apply bg-gradient-to-br from-primary to-secondary;
+  }
+
+  /* Glass Effect */
+  .glass {
+    @apply bg-background/80 backdrop-blur-lg border border-border/50;
+  }
+
+  /* Section Padding */
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32 px-4 md:px-8 lg:px-12;
+  }
+
+  /* Container */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Hover Lift Effect */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl;
+  }
+
+  /* Smooth Transitions */
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Hide Scrollbar */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Professional Project Prose Styles - Enhanced HTML Parsing */
+  .project-prose {
+    @apply max-w-4xl mx-auto;
+  }
+
+  .project-prose h1,
+  .project-prose h2 {
+    @apply text-4xl md:text-5xl font-bold mb-8 mt-16 gradient-text tracking-tight block;
+  }
+
+  .project-prose h3 {
+    @apply text-3xl md:text-4xl font-semibold mb-6 mt-12 text-foreground relative pl-6 block;
+  }
+
+  .project-prose h3::before {
+    content: '';
+    @apply absolute left-0 top-1 bottom-1 w-1 rounded-full gradient-bg;
+  }
+
+  .project-prose h4 {
+    @apply text-2xl md:text-3xl font-semibold mb-4 mt-8 text-foreground block;
+  }
+
+  .project-prose h5 {
+    @apply text-xl md:text-2xl font-semibold mb-3 mt-6 text-foreground block;
+  }
+
+  .project-prose h6 {
+    @apply text-lg md:text-xl font-semibold mb-2 mt-4 text-foreground block;
+  }
+
+  .project-prose p {
+    @apply text-lg md:text-xl leading-loose mb-6 text-muted-foreground block;
+  }
+
+  .project-prose ul,
+  .project-prose ol {
+    @apply space-y-4 mb-8 ml-6 block;
+  }
+
+  .project-prose ol {
+    @apply list-decimal;
+  }
+
+  .project-prose li {
+    @apply text-lg md:text-xl leading-relaxed text-muted-foreground relative pl-8 block;
+  }
+
+  .project-prose ul li::before {
+    content: '→';
+    @apply absolute left-0 text-primary text-2xl font-bold;
+  }
+
+  .project-prose ol li::before {
+    content: '';
+    @apply hidden;
+  }
+
+  .project-prose blockquote {
+    @apply border-l-4 border-primary/50 pl-6 py-4 my-8 italic text-xl md:text-2xl text-foreground bg-primary/5 rounded-r-lg block;
+  }
+
+  .project-prose strong,
+  .project-prose b {
+    @apply text-primary font-semibold;
+  }
+
+  .project-prose em,
+  .project-prose i {
+    @apply italic text-foreground;
+  }
+
+  .project-prose code {
+    @apply px-2 py-1 rounded bg-primary/10 text-primary font-mono text-base;
+  }
+
+  .project-prose pre {
+    @apply p-6 rounded-xl bg-card border border-border overflow-x-auto my-8 block;
+  }
+
+  .project-prose pre code {
+    @apply p-0 bg-transparent text-foreground;
+  }
+
+  .project-prose a {
+    @apply text-primary underline-offset-4 hover:underline transition-colors;
+  }
+
+  .project-prose br {
+    @apply block h-4;
+  }
+
+  .project-prose hr {
+    @apply my-8 border-t border-border;
+  }
+
+  /* Ensure prose classes work in About and Hero sections */
+  .prose p,
+  .prose-invert p {
+    @apply block mb-4 text-muted-foreground;
+  }
+
+  .prose strong,
+  .prose-invert strong {
+    @apply text-primary font-semibold;
+  }
+
+  .prose em,
+  .prose-invert em {
+    @apply italic;
+  }
+
+  .prose ul,
+  .prose-invert ul {
+    @apply list-disc ml-6 mb-4 space-y-2;
+  }
+
+  .prose ol,
+  .prose-invert ol {
+    @apply list-decimal ml-6 mb-4 space-y-2;
+  }
+
+  .prose li,
+  .prose-invert li {
+    @apply block;
+  }
+
+  /* Two Column Layout */
+  .project-two-column {
+    @apply grid md:grid-cols-2 gap-8 my-12;
+  }
+
+  /* Callout Boxes */
+  .project-callout {
+    @apply p-6 rounded-xl border-2 my-8;
+  }
+
+  .project-callout.success {
+    @apply bg-green-500/5 border-green-500/30;
+  }
+
+  .project-callout.info {
+    @apply bg-primary/5 border-primary/30;
+  }
+
+  .project-callout.warning {
+    @apply bg-yellow-500/5 border-yellow-500/30;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
