@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Plus, Pencil, XCircle, CheckCircle } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 export default function FutureProjectsManager() {
   const queryClient = useQueryClient();
@@ -214,7 +215,12 @@ export default function FutureProjectsManager() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div dangerouslySetInnerHTML={{ __html: project.description }} />
+                <div dangerouslySetInnerHTML={{ 
+                  __html: DOMPurify.sanitize(project.description, {
+                    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre'],
+                    ALLOWED_ATTR: ['href', 'target', 'rel']
+                  }) 
+                }} />
                 {project.features && project.features.length > 0 && (
                   <ul className="list-disc list-inside mt-4 space-y-1 text-sm">
                     {project.features.map((feature, i) => (

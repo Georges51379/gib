@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ExternalLink, Github, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { staggerContainer, staggerItem, fadeInUp } from "@/utils/animations";
 import { LazyImage } from "./LazyImage";
 import { ProjectFilter } from "./ProjectFilter";
@@ -16,7 +16,7 @@ export const Projects = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const categories = ["All", "Web", "Data", "AI", "Cloud"];
+  const categories = ["All", "Web", "Data", "AI", "Cloud", "Mobile"];
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['projects'],
@@ -24,13 +24,19 @@ export const Projects = () => {
       const { data, error } = await supabase
         .from('projects')
         .select('*')
-        .eq('featured', true)
+        .eq('status', 'active')
         .order('display_order', { ascending: true });
       
       if (error) throw error;
       return data;
     },
   });
+
+  // Filter projects based on active category
+  const filteredProjects = useMemo(() => {
+    if (activeCategory === "All") return projects;
+    return projects.filter(project => project.category === activeCategory);
+  }, [projects, activeCategory]);
 
   if (isLoading) {
     return (
@@ -79,7 +85,7 @@ export const Projects = () => {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
         >
-          {projects.map((project, index) => (
+          {filteredProjects.map((project, index) => (
             <motion.div
               key={project.id}
               variants={staggerItem}

@@ -4,31 +4,37 @@ import { Button } from "./ui/button";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { fadeInUp } from "@/utils/animations";
 import { LazyImage } from "./LazyImage";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+type Testimonial = {
+  id: string;
+  name: string;
+  role: string;
+  feedback: string;
+  image_url: string;
+  display_order: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
 
 export const Testimonials = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "CEO at TechStart",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-      feedback: "Georges delivered an exceptional e-commerce platform that exceeded our expectations. His attention to detail and technical expertise made the entire process smooth and efficient."
+  const { data: testimonials = [], isLoading } = useQuery({
+    queryKey: ['testimonials'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('testimonials' as any)
+        .select('*')
+        .eq('status', 'active')
+        .order('display_order', { ascending: true });
+      if (error) throw error;
+      return ((data || []) as unknown) as Testimonial[];
     },
-    {
-      name: "Michael Chen",
-      role: "CTO at DataCorp",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-      feedback: "The data analytics dashboard Georges built for us has transformed how we make decisions. The real-time insights are invaluable, and the system handles our massive data volume effortlessly."
-    },
-    {
-      name: "Emily Rodriguez",
-      role: "Product Manager at InnovateLab",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-      feedback: "Working with Georges was a pleasure. He not only understood our technical requirements but also provided valuable insights that improved our product. Highly recommended!"
-    }
-  ];
+  });
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -44,14 +50,62 @@ export const Testimonials = () => {
   };
 
   useEffect(() => {
+    if (testimonials.length === 0) return;
+    
     const interval = setInterval(() => {
       setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [testimonials.length]);
 
   const current = testimonials[currentIndex];
+
+  // Reset index if it's out of bounds
+  useEffect(() => {
+    if (testimonials.length > 0 && currentIndex >= testimonials.length) {
+      setCurrentIndex(0);
+    }
+  }, [testimonials.length, currentIndex]);
+
+  if (isLoading) {
+    return (
+      <section id="testimonials" className="section-padding" ref={ref}>
+        <div className="container-custom">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-muted rounded w-64 mx-auto mb-4"></div>
+              <div className="h-1 bg-muted rounded w-20 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!testimonials || testimonials.length === 0) {
+    return (
+      <section id="testimonials" className="section-padding" ref={ref}>
+        <div className="container-custom">
+          <motion.div 
+            className="text-center mb-16"
+            initial={fadeInUp.initial}
+            animate={isInView ? fadeInUp.animate : fadeInUp.initial}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="gradient-text mb-4">Client Testimonials</h2>
+            <motion.div 
+              className="w-20 h-1 gradient-bg mx-auto rounded-full"
+              initial={{ scaleX: 0 }}
+              animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            />
+          </motion.div>
+          <p className="text-center text-muted-foreground">No testimonials available yet.</p>
+        </div>
+      </section>
+    );
+  }
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -91,14 +145,15 @@ export const Testimonials = () => {
         <div className="max-w-4xl mx-auto">
           <div className="relative">
             {/* Testimonial Card */}
-            <AnimatePresence initial={false} custom={direction} mode="wait">
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
+            {current && (
+              <AnimatePresence initial={false} custom={direction} mode="wait">
+                <motion.div
+                  key={currentIndex}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
                   transition={{
                     x: { type: "spring", stiffness: 300, damping: 30 },
                     opacity: { duration: 0.2 }
@@ -123,7 +178,7 @@ export const Testimonials = () => {
                     className="relative"
                   >
                     <LazyImage
-                      src={current.image}
+                      src={current.image_url}
                       alt={current.name}
                       className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/30"
                     />
@@ -136,6 +191,7 @@ export const Testimonials = () => {
                 </div>
               </motion.div>
             </AnimatePresence>
+            )}
 
             {/* Navigation Buttons */}
             <div className="flex justify-center gap-4 mt-8">

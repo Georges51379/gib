@@ -80,16 +80,25 @@ export const useAuth = () => {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      // Clear local cache and storage first
+      queryClient.clear();
+      
+      // Then attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      
+      // Only throw if it's NOT a "session not found" error
+      if (error && !error.message?.includes('Session not found') && (error as any)?.status !== 403) {
+        throw error;
+      }
     },
     onSuccess: () => {
-      queryClient.clear();
       toast.success('Logged out successfully');
       navigate('/admin/login');
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Logout failed');
+      // Even on error, redirect to login (user wanted to logout)
+      toast.info('Logged out');
+      navigate('/admin/login');
     },
   });
 

@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Plus, Pencil, XCircle, CheckCircle } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 export default function EducationManager() {
   const queryClient = useQueryClient();
@@ -200,7 +201,12 @@ export default function EducationManager() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div dangerouslySetInnerHTML={{ __html: item.description }} />
+                <div dangerouslySetInnerHTML={{ 
+                  __html: DOMPurify.sanitize(item.description, {
+                    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre'],
+                    ALLOWED_ATTR: ['href', 'target', 'rel']
+                  }) 
+                }} />
                 {item.technologies && item.technologies.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
                     {item.technologies.map((tech, i) => (

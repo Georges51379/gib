@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
@@ -21,7 +22,9 @@ import ProjectsManager from "./pages/admin/ProjectsManager";
 import PricingManager from "./pages/admin/PricingManager";
 import FutureProjectsManager from "./pages/admin/FutureProjectsManager";
 import ContactInbox from "./pages/admin/ContactInbox";
+import TestimonialsManager from "./pages/admin/TestimonialsManager";
 import Maintenance from "./pages/Maintenance";
+import { SEO } from "./components/SEO";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +64,7 @@ const AppContent = () => {
 
   return (
     <>
+      {isAdminRoute && <SEO title="Admin Panel" description="Admin Dashboard" noindex={true} />}
       <LoadingScreen />
       <ScrollToTop />
       <Routes>
@@ -77,6 +81,7 @@ const AppContent = () => {
         <Route path="/admin/pricing" element={<ProtectedRoute><PricingManager /></ProtectedRoute>} />
         <Route path="/admin/future" element={<ProtectedRoute><FutureProjectsManager /></ProtectedRoute>} />
         <Route path="/admin/contact" element={<ProtectedRoute><ContactInbox /></ProtectedRoute>} />
+        <Route path="/admin/testimonials" element={<ProtectedRoute><TestimonialsManager /></ProtectedRoute>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -85,15 +90,17 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

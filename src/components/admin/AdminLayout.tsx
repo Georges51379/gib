@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
@@ -14,6 +15,7 @@ import {
   LogOut,
   Menu,
   DollarSign,
+  MessageSquare,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
@@ -27,6 +29,13 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Activity tracker for auto-logout after 15 minutes of inactivity
+  useActivityTracker({
+    onTimeout: () => logout(),
+    timeoutMinutes: 15,
+    warningMinutes: 1,
+  });
+
   const navItems = [
     { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/admin/settings', icon: Settings, label: 'Site Settings' },
@@ -37,16 +46,17 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { to: '/admin/pricing', icon: DollarSign, label: 'Pricing Plans' },
     { to: '/admin/future', icon: Lightbulb, label: 'Future Projects' },
     { to: '/admin/contact', icon: Mail, label: 'Contact Messages' },
+    { to: '/admin/testimonials', icon: MessageSquare, label: 'Testimonials' },
   ];
 
   const Sidebar = () => (
-    <aside className="w-64 bg-card border-r border-border flex flex-col">
+    <aside className="w-64 bg-card border-r border-border flex flex-col h-full">
       <div className="p-6 border-b border-border">
         <h1 className="text-2xl font-bold text-primary">Admin Panel</h1>
         <p className="text-sm text-muted-foreground mt-1">{session?.user?.email}</p>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.to}

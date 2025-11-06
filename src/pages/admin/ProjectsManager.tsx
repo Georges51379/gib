@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
@@ -31,6 +32,7 @@ export default function ProjectsManager() {
   const [liveUrl, setLiveUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [featured, setFeatured] = useState(false);
+  const [category, setCategory] = useState('Web');
 
   const { data: projects } = useQuery({
     queryKey: ['projects-list'],
@@ -58,6 +60,7 @@ export default function ProjectsManager() {
     setLiveUrl('');
     setGithubUrl('');
     setFeatured(false);
+    setCategory('Web');
   };
 
   const handleEdit = (project: any) => {
@@ -74,6 +77,7 @@ export default function ProjectsManager() {
     setLiveUrl(project.live_url || '');
     setGithubUrl(project.github_url || '');
     setFeatured(project.featured);
+    setCategory(project.category || 'Web');
     setIsOpen(true);
   };
 
@@ -100,6 +104,7 @@ export default function ProjectsManager() {
             live_url: liveUrl,
             github_url: githubUrl,
             featured,
+            category,
           })
           .eq('id', editingId);
         if (error) throw error;
@@ -117,6 +122,7 @@ export default function ProjectsManager() {
           live_url: liveUrl,
           github_url: githubUrl,
           featured,
+          category,
           display_order: displayOrder,
         });
         if (error) throw error;
@@ -124,6 +130,7 @@ export default function ProjectsManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects-list'] });
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
       toast.success(editingId ? 'Updated successfully' : 'Created successfully');
       setIsOpen(false);
       resetForm();
@@ -203,9 +210,26 @@ export default function ProjectsManager() {
                     <Input value={teamSize} onChange={(e) => setTeamSize(e.target.value)} placeholder="5 people" />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Technologies (comma separated)</Label>
-                  <Input value={technologies} onChange={(e) => setTechnologies(e.target.value)} placeholder="React, Node.js, MongoDB" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Technologies (comma separated)</Label>
+                    <Input value={technologies} onChange={(e) => setTechnologies(e.target.value)} placeholder="React, Node.js, MongoDB" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Category</Label>
+                    <Select value={category} onValueChange={setCategory}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Web">Web</SelectItem>
+                        <SelectItem value="Data">Data</SelectItem>
+                        <SelectItem value="AI">AI</SelectItem>
+                        <SelectItem value="Cloud">Cloud</SelectItem>
+                        <SelectItem value="Mobile">Mobile</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Detailed Description</Label>

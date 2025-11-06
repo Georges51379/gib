@@ -18,6 +18,8 @@ export default function Settings() {
   const [faviconUrl, setFaviconUrl] = useState('');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [maintenanceMessage, setMaintenanceMessage] = useState('');
+  const [passwordEmail, setPasswordEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   const { isLoading } = useQuery({
     queryKey: ['site-settings'],
@@ -69,6 +71,34 @@ export default function Settings() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to update settings');
+    },
+  });
+
+  const updatePasswordMutation = useMutation({
+    mutationFn: async () => {
+      if (!passwordEmail || !newPassword) {
+        throw new Error('Email and password are required');
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase.functions.invoke('update-admin-password', {
+        body: { email: passwordEmail, newPassword }
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Failed to update password');
+
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Admin password updated successfully');
+      setPasswordEmail('');
+      setNewPassword('');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to update password');
     },
   });
 
@@ -179,6 +209,46 @@ export default function Settings() {
                   />
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin Password Management</CardTitle>
+              <CardDescription>
+                Update admin user passwords (requires admin authentication)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="passwordEmail">Admin Email</Label>
+                <Input
+                  id="passwordEmail"
+                  type="email"
+                  value={passwordEmail}
+                  onChange={(e) => setPasswordEmail(e.target.value)}
+                  placeholder="admin@example.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                />
+              </div>
+
+              <Button
+                onClick={() => updatePasswordMutation.mutate()}
+                disabled={updatePasswordMutation.isPending || !passwordEmail || !newPassword}
+                variant="destructive"
+              >
+                {updatePasswordMutation.isPending ? 'Updating Password...' : 'Update Admin Password'}
+              </Button>
             </CardContent>
           </Card>
 

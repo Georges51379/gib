@@ -53,7 +53,7 @@ export type Database = {
           event_data: Json | null
           event_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           page_path: string | null
           referrer: string | null
           user_agent: string | null
@@ -63,7 +63,7 @@ export type Database = {
           event_data?: Json | null
           event_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           page_path?: string | null
           referrer?: string | null
           user_agent?: string | null
@@ -73,7 +73,7 @@ export type Database = {
           event_data?: Json | null
           event_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           page_path?: string | null
           referrer?: string | null
           user_agent?: string | null
@@ -85,7 +85,7 @@ export type Database = {
           created_at: string | null
           email: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           message: string
           name: string
           read_at: string | null
@@ -97,7 +97,7 @@ export type Database = {
           created_at?: string | null
           email: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           message: string
           name: string
           read_at?: string | null
@@ -109,7 +109,7 @@ export type Database = {
           created_at?: string | null
           email?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           message?: string
           name?: string
           read_at?: string | null
@@ -312,6 +312,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          category: string | null
           challenges: string
           created_at: string | null
           detailed_description: string
@@ -331,6 +332,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          category?: string | null
           challenges: string
           created_at?: string | null
           detailed_description: string
@@ -350,6 +352,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          category?: string | null
           challenges?: string
           created_at?: string | null
           detailed_description?: string
@@ -400,6 +403,42 @@ export type Database = {
           site_title?: string
           updated_at?: string | null
           updated_by?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          created_at: string | null
+          display_order: number
+          feedback: string
+          id: string
+          image_url: string
+          name: string
+          role: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_order: number
+          feedback: string
+          id?: string
+          image_url: string
+          name: string
+          role: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number
+          feedback?: string
+          id?: string
+          image_url?: string
+          name?: string
+          role?: string
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }

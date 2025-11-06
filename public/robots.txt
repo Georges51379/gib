@@ -1,8 +1,17 @@
+# Main robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin/*
+
+# Specific bots
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin/
 
 User-agent: Twitterbot
 Allow: /
@@ -10,7 +19,8 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Crawl-delay for politeness
+Crawl-delay: 1
 
+# Sitemap
 Sitemap: https://yoursite.com/sitemap.xml

@@ -8,6 +8,23 @@ import { motion, useInView } from "framer-motion";
 import { fadeInUp, fadeInLeft, fadeInRight, staggerContainer, staggerItem } from "@/utils/animations";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+
+const contactFormSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(2, { message: "Name must be at least 2 characters" })
+    .max(100, { message: "Name must be less than 100 characters" })
+    .regex(/^[a-zA-Z\s'-]+$/, { message: "Name contains invalid characters" }),
+  email: z.string()
+    .trim()
+    .email({ message: "Invalid email address" })
+    .max(255, { message: "Email must be less than 255 characters" }),
+  message: z.string()
+    .trim()
+    .min(10, { message: "Message must be at least 10 characters" })
+    .max(2000, { message: "Message must be less than 2000 characters" })
+});
 
 export const Contact = () => {
   const { toast } = useToast();
@@ -27,14 +44,25 @@ export const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      if (!formData.name || !formData.email || !formData.message) {
+      // Validate input with Zod schema
+      const validationResult = contactFormSchema.safeParse({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message,
+      });
+
+      if (!validationResult.success) {
+        const firstError = validationResult.error.errors[0];
         toast({
-          title: "Error",
-          description: "Please fill in all fields",
+          title: "Validation Error",
+          description: firstError.message,
           variant: "destructive",
         });
         return;
       }
+
+      // Use validated and trimmed data
+      const validatedData = validationResult.data;
 
       if (executeRecaptcha) {
         try {
@@ -69,9 +97,9 @@ export const Contact = () => {
 
       const { error } = await supabase.from("contact_messages").insert([
         {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
+          name: validatedData.name,
+          email: validatedData.email,
+          message: validatedData.message,
         },
       ]);
 
@@ -158,44 +186,10 @@ export const Contact = () => {
             >
               {contactMethods.map((method) => {
                 const Icon = method.icon;
-                const mailRef = useRef<HTMLAnchorElement | null>(null);
+                const isEmail = method.label === "Email";
 
-                const handleEmailClick = (e: React.MouseEvent) => {
-                  if (method.label === "Email") {
-                    e.preventDefault();
-                    toast({
-                      title: "Opening email client...",
-                      description: "Preparing your message to Georges",
-                      duration: 2000, // closes after 2 seconds
-                    });
-
-                    // Create or reuse a hidden anchor element for reliable Chrome behavior
-                    if (mailRef.current) {
-                      mailRef.current.click();
-                    } else {
-                      const a = document.createElement("a");
-                      a.href = method.href;
-                      a.style.display = "none";
-                      document.body.appendChild(a);
-                      a.click();
-                      document.body.removeChild(a);
-                    }
-                  }
-                };
-
-                return (
-                  <motion.a
-                    key={method.label}
-                    href={method.href}
-                    ref={method.label === "Email" ? mailRef : undefined}
-                    target={method.label === "Email" ? "_self" : "_blank"}
-                    rel={method.label !== "Email" ? "noopener noreferrer" : undefined}
-                    onClick={handleEmailClick}
-                    variants={staggerItem}
-                    whileHover={{ x: 8, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border shadow-lg transition-all hover:shadow-xl hover:border-primary/50 group"
-                  >
+                const content = (
+                  <>
                     <motion.div
                       className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors"
                       whileHover={{ rotate: 10, scale: 1.1 }}
@@ -206,6 +200,29 @@ export const Contact = () => {
                       <p className="font-semibold">{method.label}</p>
                       <p className="text-sm text-muted-foreground">{method.value}</p>
                     </div>
+                  </>
+                );
+
+                return isEmail ? (
+                  <motion.div
+                    key={method.label}
+                    variants={staggerItem}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border shadow-lg transition-all group"
+                  >
+                    {content}
+                  </motion.div>
+                ) : (
+                  <motion.a
+                    key={method.label}
+                    href={method.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variants={staggerItem}
+                    whileHover={{ x: 8, scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border shadow-lg transition-all hover:shadow-xl hover:border-primary/50 group"
+                  >
+                    {content}
                   </motion.a>
                 );
               })}
@@ -260,9 +277,14 @@ export const Contact = () => {
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                 transition={{ delay: 0.7 }}
               >
-                <label htmlFor="message" className="block text-sm font-medium mb-2">
-                  Message
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium">
+                    Message
+                  </label>
+                  <span className="text-xs text-muted-foreground">
+                    {formData.message.length}/2000
+                  </span>
+                </div>
                 <Textarea
                   id="message"
                   placeholder="Tell me about your project..."
@@ -270,6 +292,7 @@ export const Contact = () => {
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full resize-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  maxLength={2000}
                 />
               </motion.div>
 

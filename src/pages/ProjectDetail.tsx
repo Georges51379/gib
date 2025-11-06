@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import DOMPurify from "dompurify";
+import { SEO } from "@/components/SEO";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -105,8 +106,76 @@ export const ProjectDetail = () => {
   const sanitizedDescription = DOMPurify.sanitize(project.detailed_description || project.short_description);
   const sanitizedShortDescription = DOMPurify.sanitize(project.short_description || '');
 
+  const siteUrl = window.location.origin;
+  const projectUrl = `${siteUrl}/project/${project.id}`;
+  const title = `${project.title} - Georges Boutros | Full-Stack Developer`;
+  const description = project.short_description || project.title;
+
+  // Structured data for the project
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": project.title,
+        "description": description,
+        "applicationCategory": "WebApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "screenshot": [project.thumbnail_url, ...projectImages.map(img => img.image_url)],
+        "author": {
+          "@type": "Person",
+          "name": "Georges Boutros"
+        },
+        "datePublished": project.created_at,
+        "url": project.live_url || projectUrl
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@id": siteUrl,
+              "name": "Home"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@id": `${siteUrl}/#projects`,
+              "name": "Projects"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@id": projectUrl,
+              "name": project.title
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <>
+      <SEO 
+        title={title}
+        description={description}
+        canonical={projectUrl}
+        image={project.thumbnail_url}
+        type="article"
+        schema={schema}
+      />
       <Navbar />
       <BackToTop />
       
