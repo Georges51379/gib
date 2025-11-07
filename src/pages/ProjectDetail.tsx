@@ -550,17 +550,18 @@ export const ProjectDetail = () => {
         {relatedProjects.length > 0 && (
           <section className="section-padding border-t border-border">
             <div className="container-custom">
-              <div className="flex justify-between items-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
                 <motion.div
                   whileHover={{ x: -5 }}
                   transition={{ duration: 0.2 }}
+                  className="w-full sm:w-auto"
                 >
-                  <Link to={`/project/${relatedProjects[0]?.id}`}>
-                    <Button variant="outline" size="lg" className="group border-primary/30 hover:border-primary hover:bg-primary/10">
-                      <ArrowLeft className="mr-2 h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                      <div className="text-left">
+                  <Link to={`/project/${relatedProjects[0]?.id}`} className="block">
+                    <Button variant="outline" size="lg" className="group border-primary/30 hover:border-primary hover:bg-primary/10 w-full sm:w-auto justify-start">
+                      <ArrowLeft className="mr-2 h-5 w-5 flex-shrink-0 transition-transform group-hover:-translate-x-1" />
+                      <div className="text-left min-w-0 flex-1">
                         <p className="text-xs text-muted-foreground">Previous</p>
-                        <p className="font-semibold">{relatedProjects[0]?.title}</p>
+                        <p className="font-semibold truncate">{relatedProjects[0]?.title}</p>
                       </div>
                     </Button>
                   </Link>
@@ -570,14 +571,15 @@ export const ProjectDetail = () => {
                   <motion.div
                     whileHover={{ x: 5 }}
                     transition={{ duration: 0.2 }}
+                    className="w-full sm:w-auto"
                   >
-                    <Link to={`/project/${relatedProjects[1]?.id}`}>
-                      <Button variant="outline" size="lg" className="group border-primary/30 hover:border-primary hover:bg-primary/10">
-                        <div className="text-right">
+                    <Link to={`/project/${relatedProjects[1]?.id}`} className="block">
+                      <Button variant="outline" size="lg" className="group border-primary/30 hover:border-primary hover:bg-primary/10 w-full sm:w-auto justify-end sm:justify-start">
+                        <div className="text-left sm:text-right min-w-0 flex-1 order-1 sm:order-none">
                           <p className="text-xs text-muted-foreground">Next</p>
-                          <p className="font-semibold">{relatedProjects[1]?.title}</p>
+                          <p className="font-semibold truncate">{relatedProjects[1]?.title}</p>
                         </div>
-                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                        <ArrowRight className="ml-2 h-5 w-5 flex-shrink-0 transition-transform group-hover:translate-x-1 order-2 sm:order-none" />
                       </Button>
                     </Link>
                   </motion.div>

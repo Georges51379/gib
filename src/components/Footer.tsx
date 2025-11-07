@@ -67,7 +67,6 @@ export const Footer = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <p>© {currentYear} {settings?.site_title || "Georges Boutros"}. All rights reserved.</p>
-            <p className="mt-2 text-xs">Built with passion and modern technologies</p>
           </motion.div>
         </div>
       </div>
