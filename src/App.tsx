@@ -5,7 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { AnimatePresence } from "framer-motion";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -67,24 +69,27 @@ const AppContent = () => {
       {isAdminRoute && <SEO title="Admin Panel" description="Admin Dashboard" noindex={true} />}
       <LoadingScreen />
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/project/:id" element={<ProjectDetail />} />
-        <Route path="/maintenance" element={<Maintenance />} />
-        <Route path="/admin/login" element={<Login />} />
-        <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-        <Route path="/admin/hero" element={<ProtectedRoute><HeroEditor /></ProtectedRoute>} />
-        <Route path="/admin/about" element={<ProtectedRoute><AboutEditor /></ProtectedRoute>} />
-        <Route path="/admin/education" element={<ProtectedRoute><EducationManager /></ProtectedRoute>} />
-        <Route path="/admin/projects" element={<ProtectedRoute><ProjectsManager /></ProtectedRoute>} />
-        <Route path="/admin/pricing" element={<ProtectedRoute><PricingManager /></ProtectedRoute>} />
-        <Route path="/admin/future" element={<ProtectedRoute><FutureProjectsManager /></ProtectedRoute>} />
-        <Route path="/admin/contact" element={<ProtectedRoute><ContactInbox /></ProtectedRoute>} />
-        <Route path="/admin/testimonials" element={<ProtectedRoute><TestimonialsManager /></ProtectedRoute>} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <ScrollProgressBar />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Index />} />
+          <Route path="/project/:id" element={<ProjectDetail />} />
+          <Route path="/maintenance" element={<Maintenance />} />
+          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/admin/hero" element={<ProtectedRoute><HeroEditor /></ProtectedRoute>} />
+          <Route path="/admin/about" element={<ProtectedRoute><AboutEditor /></ProtectedRoute>} />
+          <Route path="/admin/education" element={<ProtectedRoute><EducationManager /></ProtectedRoute>} />
+          <Route path="/admin/projects" element={<ProtectedRoute><ProjectsManager /></ProtectedRoute>} />
+          <Route path="/admin/pricing" element={<ProtectedRoute><PricingManager /></ProtectedRoute>} />
+          <Route path="/admin/future" element={<ProtectedRoute><FutureProjectsManager /></ProtectedRoute>} />
+          <Route path="/admin/contact" element={<ProtectedRoute><ContactInbox /></ProtectedRoute>} />
+          <Route path="/admin/testimonials" element={<ProtectedRoute><TestimonialsManager /></ProtectedRoute>} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AnimatePresence>
     </>
   );
 };

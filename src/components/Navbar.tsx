@@ -170,8 +170,8 @@ export const Navbar = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                aria-label="Toggle dark mode"
-                className="transition-transform hover:scale-110"
+                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                className="transition-transform hover:scale-110 min-h-[44px] min-w-[44px]"
               >
                 <motion.div
                   initial={false}
@@ -189,9 +189,9 @@ export const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden relative w-10 h-10 text-foreground hover:text-primary"
+                className="lg:hidden relative min-w-[44px] min-h-[44px] text-foreground hover:text-primary"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label="Toggle menu"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 <div className="w-6 h-5 flex flex-col justify-between">
                   <motion.span
