@@ -28,4 +28,4 @@ User-agent: DotBot
 Disallow: /
 
 # Sitemap (will be dynamically generated)
-Sitemap: https://yoursite.com/sitemap.xml
+Sitemap: https://gib-two.vercel.app/sitemap.xml
