@@ -1,18 +1,10 @@
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Moon, Sun, Home, User, GraduationCap, Briefcase, DollarSign, MessageSquare, Mail, Github, Linkedin, Twitter } from "lucide-react";
-import { Button } from "./ui/button";
-import { motion, AnimatePresence } from "framer-motion";
-import { useSiteSettings } from "@/hooks/useSiteSettings";
-=======
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Menu, X, Moon, Sun, Home, User, GraduationCap, Briefcase, DollarSign, MessageSquare, Mail, Github, Linkedin, Twitter, Wrench } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useSmartTheme } from "@/hooks/useSmartTheme";
->>>>>>> c8912d8 (Version 4 added new features and page)
 
 const navLinks = [
   { name: "Home", href: "#home", icon: Home },
@@ -37,17 +29,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("#home");
-<<<<<<< HEAD
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("darkMode");
-      return saved ? JSON.parse(saved) : true; // Default to dark mode
-    }
-    return true;
-  });
-=======
   const { isDark: isDarkMode, toggleTheme } = useSmartTheme();
->>>>>>> c8912d8 (Version 4 added new features and page)
 
   const logoText = settings?.logo_url 
     ? null 
@@ -75,14 +57,6 @@ export const Navbar = () => {
   }, []);
 
   useEffect(() => {
-<<<<<<< HEAD
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
-
-  useEffect(() => {
-=======
->>>>>>> c8912d8 (Version 4 added new features and page)
     // Prevent body scroll when menu is open
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -178,8 +152,6 @@ export const Navbar = () => {
                   )}
                 </motion.a>
               ))}
-<<<<<<< HEAD
-=======
               <Link
                 to="/dev-tools"
                 className="px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md text-foreground hover:text-primary flex items-center gap-1.5"
@@ -187,7 +159,6 @@ export const Navbar = () => {
                 <Wrench className="w-4 h-4" />
                 Dev Tools
               </Link>
->>>>>>> c8912d8 (Version 4 added new features and page)
             </div>
 
             {/* Dark Mode Toggle & Mobile Menu Button */}
@@ -195,11 +166,7 @@ export const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-<<<<<<< HEAD
-                onClick={() => setIsDarkMode(!isDarkMode)}
-=======
                 onClick={toggleTheme}
->>>>>>> c8912d8 (Version 4 added new features and page)
                 aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
                 className="transition-transform hover:scale-110 min-h-[44px] min-w-[44px]"
               >

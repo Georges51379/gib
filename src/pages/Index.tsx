@@ -2,11 +2,8 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
 import { Education } from "@/components/Education";
-<<<<<<< HEAD
-=======
 import TechStackHeatmap from "@/components/TechStackHeatmap";
 import SkillsTimeline from "@/components/SkillsTimeline";
->>>>>>> c8912d8 (Version 4 added new features and page)
 import { Projects } from "@/components/Projects";
 import { Pricing } from "@/components/Pricing";
 import { Testimonials } from "@/components/Testimonials";
@@ -118,11 +115,8 @@ const Index = () => {
         <Hero />
         <About />
         <Education />
-<<<<<<< HEAD
-=======
         <TechStackHeatmap />
         <SkillsTimeline />
->>>>>>> c8912d8 (Version 4 added new features and page)
         <Projects />
         <Pricing />
         <Testimonials />

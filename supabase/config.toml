@@ -1,8 +1,6 @@
 project_id = "ypbuuvipagxfjfrhizcs"
 
 [functions.generate-sitemap]
-<<<<<<< HEAD
-=======
 verify_jwt = false
 
 [functions.update-admin-password]
@@ -15,5 +13,4 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.get-mapbox-token]
->>>>>>> c8912d8 (Version 4 added new features and page)
 verify_jwt = false

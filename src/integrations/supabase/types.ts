@@ -403,8 +403,6 @@ export type Database = {
           site_title?: string
           updated_at?: string | null
           updated_by?: string | null
-<<<<<<< HEAD
-=======
         }
         Relationships: []
       }
@@ -492,7 +490,6 @@ export type Database = {
           name?: string
           status?: string | null
           updated_at?: string | null
->>>>>>> c8912d8 (Version 4 added new features and page)
         }
         Relationships: []
       }

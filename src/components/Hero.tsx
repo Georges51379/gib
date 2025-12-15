@@ -6,14 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "./ui/skeleton";
 import DOMPurify from "dompurify";
-<<<<<<< HEAD
-
-=======
 import { lazy, Suspense } from "react";
 
 const Hero3DScene = lazy(() => import('./Hero3DScene'));
 
->>>>>>> c8912d8 (Version 4 added new features and page)
 export const Hero = () => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
@@ -77,8 +73,6 @@ export const Hero = () => {
         </video>
         <div className="absolute inset-0 bg-[hsl(var(--hero-overlay))]" style={{ opacity: heroData?.background_overlay_opacity || 0.7 }} />
       </motion.div>
-<<<<<<< HEAD
-=======
 
       {/* 3D Scene Layer */}
       <Suspense fallback={null}>
@@ -86,7 +80,6 @@ export const Hero = () => {
           <Hero3DScene />
         </div>
       </Suspense>
->>>>>>> c8912d8 (Version 4 added new features and page)
 
       {/* Content */}
       <motion.div 

@@ -8,16 +8,10 @@ export const Footer = () => {
   const { data: settings } = useSiteSettings();
 
   const socialLinks = [
-<<<<<<< HEAD
-    { icon: Mail, href: "mailto:boutros.georges513@gmail.com", label: "Email" },
-    { icon: Linkedin, href: "https://linkedin.com/in/georges-boutros-534960211", label: "LinkedIn" },
-    { icon: Github, href: "https://github.com/Georges51379", label: "GitHub" }
-=======
     { icon: Mail, href: "mailto:contact@gibdev.com", label: "Email" },
     { icon: Linkedin, href: "https://linkedin.com/in/yourusername", label: "LinkedIn" },
     { icon: Github, href: "https://github.com/yourusername", label: "GitHub" },
     { icon: Twitter, href: "https://twitter.com/yourusername", label: "Twitter" }
->>>>>>> c8912d8 (Version 4 added new features and page)
   ];
 
   return (
