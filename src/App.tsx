@@ -13,6 +13,10 @@ import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import Index from "./pages/Index";
 import ProjectDetail from "./pages/ProjectDetail";
+<<<<<<< HEAD
+=======
+import DevTools from "./pages/DevTools";
+>>>>>>> c8912d8 (Version 4 added new features and page)
 import NotFound from "./pages/NotFound";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
@@ -25,14 +29,29 @@ import PricingManager from "./pages/admin/PricingManager";
 import FutureProjectsManager from "./pages/admin/FutureProjectsManager";
 import ContactInbox from "./pages/admin/ContactInbox";
 import TestimonialsManager from "./pages/admin/TestimonialsManager";
+<<<<<<< HEAD
 import Maintenance from "./pages/Maintenance";
 import { SEO } from "./components/SEO";
+=======
+import Analytics from "./pages/admin/Analytics";
+import TechStackManager from "./pages/admin/TechStackManager";
+import SkillsTimelineManager from "./pages/admin/SkillsTimelineManager";
+import Maintenance from "./pages/Maintenance";
+import { SEO } from "./components/SEO";
+import { usePageViewTracker } from "./hooks/usePageViewTracker";
+>>>>>>> c8912d8 (Version 4 added new features and page)
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { data: settings, isLoading } = useSiteSettings();
   const location = useLocation();
+<<<<<<< HEAD
+=======
+  
+  // Track page views for analytics
+  usePageViewTracker();
+>>>>>>> c8912d8 (Version 4 added new features and page)
 
   useEffect(() => {
     if (settings?.site_title) {
@@ -74,6 +93,10 @@ const AppContent = () => {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
           <Route path="/project/:id" element={<ProjectDetail />} />
+<<<<<<< HEAD
+=======
+          <Route path="/dev-tools" element={<DevTools />} />
+>>>>>>> c8912d8 (Version 4 added new features and page)
           <Route path="/maintenance" element={<Maintenance />} />
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -86,6 +109,12 @@ const AppContent = () => {
           <Route path="/admin/future" element={<ProtectedRoute><FutureProjectsManager /></ProtectedRoute>} />
           <Route path="/admin/contact" element={<ProtectedRoute><ContactInbox /></ProtectedRoute>} />
           <Route path="/admin/testimonials" element={<ProtectedRoute><TestimonialsManager /></ProtectedRoute>} />
+<<<<<<< HEAD
+=======
+          <Route path="/admin/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+          <Route path="/admin/tech-stack" element={<ProtectedRoute><TechStackManager /></ProtectedRoute>} />
+          <Route path="/admin/timeline" element={<ProtectedRoute><SkillsTimelineManager /></ProtectedRoute>} />
+>>>>>>> c8912d8 (Version 4 added new features and page)
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

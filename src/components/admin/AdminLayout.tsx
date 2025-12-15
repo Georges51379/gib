@@ -16,6 +16,12 @@ import {
   Menu,
   DollarSign,
   MessageSquare,
+<<<<<<< HEAD
+=======
+  BarChart3,
+  Code2,
+  Clock,
+>>>>>>> c8912d8 (Version 4 added new features and page)
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
@@ -45,8 +51,16 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { to: '/admin/projects', icon: Folder, label: 'Projects' },
     { to: '/admin/pricing', icon: DollarSign, label: 'Pricing Plans' },
     { to: '/admin/future', icon: Lightbulb, label: 'Future Projects' },
+<<<<<<< HEAD
     { to: '/admin/contact', icon: Mail, label: 'Contact Messages' },
     { to: '/admin/testimonials', icon: MessageSquare, label: 'Testimonials' },
+=======
+    { to: '/admin/tech-stack', icon: Code2, label: 'Tech Stack' },
+    { to: '/admin/timeline', icon: Clock, label: 'Skills Timeline' },
+    { to: '/admin/contact', icon: Mail, label: 'Contact Messages' },
+    { to: '/admin/testimonials', icon: MessageSquare, label: 'Testimonials' },
+    { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+>>>>>>> c8912d8 (Version 4 added new features and page)
   ];
 
   const Sidebar = () => (

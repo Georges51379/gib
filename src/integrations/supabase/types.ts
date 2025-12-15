@@ -403,6 +403,96 @@ export type Database = {
           site_title?: string
           updated_at?: string | null
           updated_by?: string | null
+<<<<<<< HEAD
+=======
+        }
+        Relationships: []
+      }
+      skills_timeline: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          display_order: number
+          icon: string | null
+          id: string
+          month: string | null
+          project_link: string | null
+          skills: string[] | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          year: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          display_order?: number
+          icon?: string | null
+          id?: string
+          month?: string | null
+          project_link?: string | null
+          skills?: string[] | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          year: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          display_order?: number
+          icon?: string | null
+          id?: string
+          month?: string | null
+          project_link?: string | null
+          skills?: string[] | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          year?: string
+        }
+        Relationships: []
+      }
+      tech_stack: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          display_order: number
+          experience_level: number
+          icon: string | null
+          id: string
+          name: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          display_order?: number
+          experience_level: number
+          icon?: string | null
+          id?: string
+          name: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          display_order?: number
+          experience_level?: number
+          icon?: string | null
+          id?: string
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+>>>>>>> c8912d8 (Version 4 added new features and page)
         }
         Relationships: []
       }

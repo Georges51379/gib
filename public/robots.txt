@@ -4,15 +4,27 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
+<<<<<<< HEAD
 # Googlebot
 User-agent: Googlebot
 Allow: /
 Disallow: /admin/
+=======
+# Specific bots
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Crawl-delay: 0
+>>>>>>> c8912d8 (Version 4 added new features and page)
 
 # Bingbot
 User-agent: Bingbot
 Allow: /
 Disallow: /admin/
+<<<<<<< HEAD
+=======
+Crawl-delay: 0
+>>>>>>> c8912d8 (Version 4 added new features and page)
 
 # Social bots
 User-agent: Twitterbot
@@ -21,6 +33,7 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+<<<<<<< HEAD
 # Block bad bots
 User-agent: AhrefsBot
 Disallow: /
@@ -33,3 +46,13 @@ Disallow: /
 
 # Sitemap
 Sitemap: https://gib-two.vercel.app/sitemap.xml
+=======
+# Bad bots
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: DotBot
+Disallow: /
+
+# Sitemap (will be dynamically generated)
+Sitemap: https://yoursite.com/sitemap.xml
+>>>>>>> c8912d8 (Version 4 added new features and page)

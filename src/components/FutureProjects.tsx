@@ -89,7 +89,10 @@ export const FutureProjects = () => {
                   >
                     <IconComponent className="h-12 w-12 text-primary" />
                   </motion.div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> c8912d8 (Version 4 added new features and page)
                   <motion.span 
                     className={`text-sm font-semibold ${getStatusColor(project.project_status)}`}
                     initial={{ opacity: 0, x: 20 }}
@@ -101,30 +104,42 @@ export const FutureProjects = () => {
                 </div>
 
                 <h3 className="text-xl font-bold mb-3">{project.title}</h3>
+<<<<<<< HEAD
 
                 {/* --- HTML PARSING FOR DESCRIPTION --- */}
                 <p
                   className="text-muted-foreground mb-4 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 ></p>
+=======
+                <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
+>>>>>>> c8912d8 (Version 4 added new features and page)
 
                 <div>
                   <p className="text-sm font-semibold mb-2">Expected Features:</p>
                   <ul className="space-y-1">
                     {(project.features || []).map((feature: string, featureIndex: number) => (
                       <motion.li 
+<<<<<<< HEAD
                         key={featureIndex}
+=======
+                        key={feature} 
+>>>>>>> c8912d8 (Version 4 added new features and page)
                         className="text-sm text-muted-foreground flex items-start gap-2"
                         initial={{ opacity: 0, x: -10 }}
                         animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
                         transition={{ delay: 0.7 + index * 0.1 + featureIndex * 0.05 }}
                       >
                         <span className="text-primary mt-1">•</span>
+<<<<<<< HEAD
                         
                         {/* --- HTML PARSING FOR FEATURES IF THEY CONTAIN HTML --- */}
                         <span
                           dangerouslySetInnerHTML={{ __html: feature }}
                         ></span>
+=======
+                        <span>{feature}</span>
+>>>>>>> c8912d8 (Version 4 added new features and page)
                       </motion.li>
                     ))}
                   </ul>
