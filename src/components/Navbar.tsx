@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Menu, X, Moon, Sun, Home, User, GraduationCap, Briefcase, DollarSign, MessageSquare, Mail, Github, Linkedin, Twitter, Wrench } from "lucide-react";
+import { Menu, X, Moon, Sun, Wrench, Home, User, GraduationCap, Briefcase, DollarSign, MessageSquare, Mail, Github, Linkedin, Twitter, Wrench } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -14,6 +14,7 @@ const navLinks = [
   { name: "Services", href: "#pricing", icon: DollarSign },
   { name: "Testimonials", href: "#testimonials", icon: MessageSquare },
   { name: "Contact", href: "#contact", icon: Mail },
+  { name: "Dev Tools", href: "/devtools", icon: Wrench }
 ];
 
 const socialLinks = [
