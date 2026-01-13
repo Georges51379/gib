@@ -5,6 +5,7 @@ import { staggerContainer, staggerItem, fadeInUp } from "@/utils/animations";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "./ui/skeleton";
+import DOMPurify from "dompurify";
 
 export const FutureProjects = () => {
   const ref = useRef(null);
@@ -100,7 +101,12 @@ export const FutureProjects = () => {
                 </div>
 
                 <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-                <p className="text-muted-foreground mb-4 leading-relaxed">{project.description}</p>
+                <p 
+                  className="text-muted-foreground mb-4 leading-relaxed"
+                  dangerouslySetInnerHTML={{ 
+                    __html: DOMPurify.sanitize(project.description, { ALLOWED_TAGS: [] }) 
+                  }}
+                />
 
                 <div>
                   <p className="text-sm font-semibold mb-2">Expected Features:</p>

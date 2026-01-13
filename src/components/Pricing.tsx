@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, Package } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
@@ -112,7 +112,7 @@ export const Pricing = () => {
                 </span>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-3 mb-6">
                 {plan.features.map((feature, featureIndex) => (
                   <motion.li 
                     key={feature} 
@@ -129,6 +129,32 @@ export const Pricing = () => {
                 ))}
               </ul>
 
+              {/* Deliverables Section */}
+              {plan.deliverables && plan.deliverables.length > 0 && (
+                <div className={`mb-6 pt-4 border-t ${plan.highlighted ? "border-white/20" : "border-border"}`}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Package className={`h-4 w-4 ${plan.highlighted ? "text-white/80" : "text-muted-foreground"}`} />
+                    <span className={`text-sm font-semibold ${plan.highlighted ? "text-white/80" : "text-muted-foreground"}`}>
+                      What's Included:
+                    </span>
+                  </div>
+                  <ul className="space-y-2">
+                    {plan.deliverables.map((deliverable: string, dIndex: number) => (
+                      <motion.li 
+                        key={deliverable} 
+                        className={`text-sm flex items-start gap-2 ${plan.highlighted ? "text-white/70" : "text-muted-foreground"}`}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                        transition={{ delay: 0.8 + index * 0.1 + dIndex * 0.02 }}
+                      >
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-current flex-shrink-0" />
+                        <span>{deliverable}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -142,7 +168,9 @@ export const Pricing = () => {
                   }`}
                   variant={plan.highlighted ? "default" : "outline"}
                 >
-                  <span className="relative z-10">Get Started</span>
+                  <span className="relative z-10">
+                    {plan.cta_text || (plan.name?.toLowerCase().includes('enterprise') ? 'Book a Call' : 'Get Started')}
+                  </span>
                   {!plan.highlighted && (
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
                   )}

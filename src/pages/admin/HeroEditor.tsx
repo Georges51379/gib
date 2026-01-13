@@ -15,11 +15,14 @@ export default function HeroEditor() {
   const queryClient = useQueryClient();
   const [name, setName] = useState('');
   const [subtitle, setSubtitle] = useState('');
+  const [tagline, setTagline] = useState('');
   const [description, setDescription] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [opacity, setOpacity] = useState(0.7);
   const [ctaPrimary, setCtaPrimary] = useState('');
   const [ctaSecondary, setCtaSecondary] = useState('');
+  const [trustBadges, setTrustBadges] = useState<string[]>([]);
+  const [newBadge, setNewBadge] = useState('');
 
   const { isLoading } = useQuery({
     queryKey: ['hero-section'],
@@ -34,11 +37,13 @@ export default function HeroEditor() {
       if (data) {
         setName(data.name);
         setSubtitle(data.subtitle);
+        setTagline(data.tagline || '');
         setDescription(data.description);
         setVideoUrl(data.video_url && data.video_url.trim() !== '' ? data.video_url : '');
         setOpacity(data.background_overlay_opacity || 0.7);
         setCtaPrimary(data.cta_primary_text || '');
         setCtaSecondary(data.cta_secondary_text || '');
+        setTrustBadges(data.trust_badges || []);
       }
 
       return data;
@@ -66,11 +71,13 @@ export default function HeroEditor() {
         .update({
           name,
           subtitle,
+          tagline,
           description,
           video_url: finalVideoUrl,
           background_overlay_opacity: opacity,
           cta_primary_text: ctaPrimary,
           cta_secondary_text: ctaSecondary,
+          trust_badges: trustBadges,
         })
         .eq('id', hero.id);
 
@@ -133,6 +140,67 @@ export default function HeroEditor() {
                 onChange={(e) => setSubtitle(e.target.value)}
                 placeholder="Your Title / Role"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tagline">Tagline</Label>
+              <Input
+                id="tagline"
+                value={tagline}
+                onChange={(e) => setTagline(e.target.value)}
+                placeholder="Building secure, scalable, data-driven web applications"
+              />
+              <p className="text-xs text-muted-foreground">A short positioning statement shown below the subtitle</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Trust Badges</Label>
+              <p className="text-sm text-muted-foreground mb-2">
+                Keywords that highlight your expertise (shown as chips)
+              </p>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {trustBadges.map((badge, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-primary/10 text-primary rounded-full"
+                  >
+                    {badge}
+                    <button
+                      type="button"
+                      onClick={() => setTrustBadges(trustBadges.filter((_, i) => i !== index))}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  value={newBadge}
+                  onChange={(e) => setNewBadge(e.target.value)}
+                  placeholder="e.g., Payments, RBAC, API Integrations"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && newBadge.trim()) {
+                      e.preventDefault();
+                      setTrustBadges([...trustBadges, newBadge.trim()]);
+                      setNewBadge('');
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    if (newBadge.trim()) {
+                      setTrustBadges([...trustBadges, newBadge.trim()]);
+                      setNewBadge('');
+                    }
+                  }}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
 
             <div className="space-y-2">

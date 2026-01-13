@@ -33,6 +33,16 @@ export default function ProjectsManager() {
   const [githubUrl, setGithubUrl] = useState('');
   const [featured, setFeatured] = useState(false);
   const [category, setCategory] = useState('Web');
+  
+  // New case study fields
+  const [problemStatement, setProblemStatement] = useState('');
+  const [solutionDescription, setSolutionDescription] = useState('');
+  const [architectureSummary, setArchitectureSummary] = useState('');
+  const [securityFeatures, setSecurityFeatures] = useState('');
+  const [keyFeatures, setKeyFeatures] = useState('');
+  const [resultsImpact, setResultsImpact] = useState('');
+  const [categoryTags, setCategoryTags] = useState('');
+  const [slug, setSlug] = useState('');
 
   const { data: projects } = useQuery({
     queryKey: ['projects-list'],
@@ -61,6 +71,15 @@ export default function ProjectsManager() {
     setGithubUrl('');
     setFeatured(false);
     setCategory('Web');
+    // Reset new fields
+    setProblemStatement('');
+    setSolutionDescription('');
+    setArchitectureSummary('');
+    setSecurityFeatures('');
+    setKeyFeatures('');
+    setResultsImpact('');
+    setCategoryTags('');
+    setSlug('');
   };
 
   const handleEdit = (project: any) => {
@@ -78,51 +97,61 @@ export default function ProjectsManager() {
     setGithubUrl(project.github_url || '');
     setFeatured(project.featured);
     setCategory(project.category || 'Web');
+    // New fields
+    setProblemStatement(project.problem_statement || '');
+    setSolutionDescription(project.solution_description || '');
+    setArchitectureSummary(project.architecture_summary || '');
+    setSecurityFeatures(project.security_features?.join(', ') || '');
+    setKeyFeatures(project.key_features?.join(', ') || '');
+    setResultsImpact(project.results_impact || '');
+    setCategoryTags(project.category_tags?.join(', ') || '');
+    setSlug(project.slug || '');
     setIsOpen(true);
   };
 
   const saveMutation = useMutation({
     mutationFn: async () => {
       const techArray = technologies.split(',').map((t) => t.trim()).filter(Boolean);
+      const securityArray = securityFeatures.split(',').map((s) => s.trim()).filter(Boolean);
+      const featuresArray = keyFeatures.split(',').map((f) => f.trim()).filter(Boolean);
+      const tagsArray = categoryTags.split(',').map((t) => t.trim()).filter(Boolean);
       const displayOrder = editingId
         ? (projects?.find((p) => p.id === editingId)?.display_order || 0)
         : (projects?.length || 0) + 1;
 
+      const projectData = {
+        title,
+        short_description: shortDescription,
+        detailed_description: detailedDescription,
+        thumbnail_url: thumbnailUrl,
+        duration,
+        role,
+        team_size: teamSize,
+        technologies: techArray,
+        challenges,
+        live_url: liveUrl,
+        github_url: githubUrl,
+        featured,
+        category,
+        problem_statement: problemStatement,
+        solution_description: solutionDescription,
+        architecture_summary: architectureSummary,
+        security_features: securityArray,
+        key_features: featuresArray,
+        results_impact: resultsImpact,
+        category_tags: tagsArray,
+        slug: slug || title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-'),
+      };
+
       if (editingId) {
         const { error } = await supabase
           .from('projects')
-          .update({
-            title,
-            short_description: shortDescription,
-            detailed_description: detailedDescription,
-            thumbnail_url: thumbnailUrl,
-            duration,
-            role,
-            team_size: teamSize,
-            technologies: techArray,
-            challenges,
-            live_url: liveUrl,
-            github_url: githubUrl,
-            featured,
-            category,
-          })
+          .update(projectData)
           .eq('id', editingId);
         if (error) throw error;
       } else {
         const { error } = await supabase.from('projects').insert({
-          title,
-          short_description: shortDescription,
-          detailed_description: detailedDescription,
-          thumbnail_url: thumbnailUrl,
-          duration,
-          role,
-          team_size: teamSize,
-          technologies: techArray,
-          challenges,
-          live_url: liveUrl,
-          github_url: githubUrl,
-          featured,
-          category,
+          ...projectData,
           display_order: displayOrder,
         });
         if (error) throw error;
@@ -238,6 +267,82 @@ export default function ProjectsManager() {
                 <div className="space-y-2">
                   <Label>Challenges & Solutions</Label>
                   <RichTextEditor content={challenges} onChange={setChallenges} />
+                </div>
+
+                {/* Case Study Section */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-lg font-semibold mb-4">Case Study Details (Optional)</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Problem Statement</Label>
+                      <Textarea 
+                        value={problemStatement} 
+                        onChange={(e) => setProblemStatement(e.target.value)} 
+                        rows={3}
+                        placeholder="What business/user pain point does this project solve?"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Solution Description</Label>
+                      <Textarea 
+                        value={solutionDescription} 
+                        onChange={(e) => setSolutionDescription(e.target.value)} 
+                        rows={3}
+                        placeholder="What did you build to solve this problem?"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Architecture Summary</Label>
+                      <Textarea 
+                        value={architectureSummary} 
+                        onChange={(e) => setArchitectureSummary(e.target.value)} 
+                        rows={3}
+                        placeholder="FE: React, BE: Node.js, DB: PostgreSQL, Auth: Supabase Auth..."
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Security Features (comma separated)</Label>
+                        <Input 
+                          value={securityFeatures} 
+                          onChange={(e) => setSecurityFeatures(e.target.value)} 
+                          placeholder="RBAC, RLS, Rate Limiting, Input Validation"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Category Tags (comma separated)</Label>
+                        <Input 
+                          value={categoryTags} 
+                          onChange={(e) => setCategoryTags(e.target.value)} 
+                          placeholder="Payments, Dashboard, Auth, APIs"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Key Features (comma separated)</Label>
+                      <Textarea 
+                        value={keyFeatures} 
+                        onChange={(e) => setKeyFeatures(e.target.value)} 
+                        rows={2}
+                        placeholder="Real-time updates, Multi-tenancy, Payment processing, PDF export"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Results / Impact</Label>
+                      <Textarea 
+                        value={resultsImpact} 
+                        onChange={(e) => setResultsImpact(e.target.value)} 
+                        rows={2}
+                        placeholder="Quantitative metrics or qualitative outcomes achieved"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">

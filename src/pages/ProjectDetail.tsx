@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Github, Clock, Code2, Calendar, User, Briefcase, ArrowRight } from "lucide-react";
+import { ArrowLeft, ExternalLink, Github, Clock, Code2, Calendar, User, Briefcase, ArrowRight, Target, Lightbulb, Shield, Layers, CheckCircle, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/Navbar";
@@ -23,6 +23,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -371,6 +377,139 @@ export const ProjectDetail = () => {
             />
           </div>
         </section>
+
+        <SectionDivider />
+
+        {/* Case Study Sections */}
+        {(project.problem_statement || project.solution_description || project.architecture_summary || 
+          (project.security_features && project.security_features.length > 0) ||
+          (project.key_features && project.key_features.length > 0) || project.results_impact) && (
+          <section className="section-padding">
+            <div className="container-custom">
+              <motion.div 
+                {...fadeInUp} 
+                transition={{ duration: 0.6 }}
+                className="text-center mb-16"
+              >
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">Case Study</h2>
+                <motion.div 
+                  className="w-24 h-1.5 gradient-bg mx-auto rounded-full shadow-[0_0_20px_rgba(255,215,0,0.4)]"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                />
+              </motion.div>
+
+              <div className="max-w-4xl mx-auto">
+                <Accordion type="single" collapsible className="space-y-4">
+                  {/* Problem Statement */}
+                  {project.problem_statement && (
+                    <AccordionItem value="problem" className="border border-border rounded-2xl px-6 bg-card">
+                      <AccordionTrigger className="text-xl font-semibold hover:no-underline py-6">
+                        <div className="flex items-center gap-3">
+                          <Target className="h-6 w-6 text-primary" />
+                          <span>Problem & Challenge</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-lg text-muted-foreground pb-6 leading-relaxed">
+                        {project.problem_statement}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {/* Solution */}
+                  {project.solution_description && (
+                    <AccordionItem value="solution" className="border border-border rounded-2xl px-6 bg-card">
+                      <AccordionTrigger className="text-xl font-semibold hover:no-underline py-6">
+                        <div className="flex items-center gap-3">
+                          <Lightbulb className="h-6 w-6 text-primary" />
+                          <span>Solution</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-lg text-muted-foreground pb-6 leading-relaxed">
+                        {project.solution_description}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {/* Architecture */}
+                  {project.architecture_summary && (
+                    <AccordionItem value="architecture" className="border border-border rounded-2xl px-6 bg-card">
+                      <AccordionTrigger className="text-xl font-semibold hover:no-underline py-6">
+                        <div className="flex items-center gap-3">
+                          <Layers className="h-6 w-6 text-primary" />
+                          <span>Architecture</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-lg text-muted-foreground pb-6 leading-relaxed whitespace-pre-line">
+                        {project.architecture_summary}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {/* Security Features */}
+                  {project.security_features && project.security_features.length > 0 && (
+                    <AccordionItem value="security" className="border border-border rounded-2xl px-6 bg-card">
+                      <AccordionTrigger className="text-xl font-semibold hover:no-underline py-6">
+                        <div className="flex items-center gap-3">
+                          <Shield className="h-6 w-6 text-primary" />
+                          <span>Security & Reliability</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-6">
+                        <div className="flex flex-wrap gap-3">
+                          {project.security_features.map((feature: string) => (
+                            <Badge key={feature} variant="outline" className="text-base px-4 py-2">
+                              {feature}
+                            </Badge>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {/* Key Features */}
+                  {project.key_features && project.key_features.length > 0 && (
+                    <AccordionItem value="features" className="border border-border rounded-2xl px-6 bg-card">
+                      <AccordionTrigger className="text-xl font-semibold hover:no-underline py-6">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle className="h-6 w-6 text-primary" />
+                          <span>Key Features</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-6">
+                        <ul className="space-y-3">
+                          {project.key_features.map((feature: string, index: number) => (
+                            <li key={index} className="flex items-start gap-3 text-lg text-muted-foreground">
+                              <span className="mt-2 h-2 w-2 rounded-full bg-primary flex-shrink-0" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {/* Results & Impact */}
+                  {project.results_impact && (
+                    <AccordionItem value="results" className="border border-border rounded-2xl px-6 bg-card">
+                      <AccordionTrigger className="text-xl font-semibold hover:no-underline py-6">
+                        <div className="flex items-center gap-3">
+                          <TrendingUp className="h-6 w-6 text-primary" />
+                          <span>Results & Impact</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-lg text-muted-foreground pb-6 leading-relaxed">
+                        {project.results_impact}
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                </Accordion>
+              </div>
+            </div>
+          </section>
+        )}
 
         <SectionDivider />
 

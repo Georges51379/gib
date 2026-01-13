@@ -99,15 +99,49 @@ export const Hero = () => {
           initial={fadeInUp.initial}
           animate={fadeInUp.animate}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="text-lg md:text-2xl lg:text-3xl text-white/90 mb-8 font-light max-w-3xl mx-auto"
+          className="text-lg md:text-2xl lg:text-3xl text-white/90 mb-4 font-light max-w-3xl mx-auto"
         >
           {heroData?.subtitle || "Full-Stack Developer & Data Engineer"}
         </motion.p>
+
+        {/* Tagline */}
+        {heroData?.tagline && (
+          <motion.p 
+            initial={fadeInUp.initial}
+            animate={fadeInUp.animate}
+            transition={{ delay: 0.25, duration: 0.6 }}
+            className="text-base md:text-lg text-white/70 mb-6 max-w-2xl mx-auto italic"
+          >
+            {heroData.tagline}
+          </motion.p>
+        )}
+
+        {/* Trust Badges */}
+        {heroData?.trust_badges && heroData.trust_badges.length > 0 && (
+          <motion.div 
+            initial={fadeInUp.initial}
+            animate={fadeInUp.animate}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="flex flex-wrap justify-center gap-2 mb-6"
+          >
+            {heroData.trust_badges.map((badge: string, index: number) => (
+              <motion.span
+                key={badge}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                className="px-3 py-1.5 text-sm font-medium bg-primary/20 text-primary border border-primary/30 rounded-full backdrop-blur-sm"
+              >
+                {badge}
+              </motion.span>
+            ))}
+          </motion.div>
+        )}
         
         <motion.div 
           initial={fadeInUp.initial}
           animate={fadeInUp.animate}
-          transition={{ delay: 0.3, duration: 0.6 }}
+          transition={{ delay: 0.35, duration: 0.6 }}
           className="text-base md:text-lg lg:text-xl text-white/80 mb-12 max-w-2xl mx-auto prose prose-invert max-w-none"
           dangerouslySetInnerHTML={{ 
             __html: DOMPurify.sanitize(heroData?.description || "Building innovative solutions with modern technologies") 
@@ -117,7 +151,7 @@ export const Hero = () => {
         <motion.div 
           initial={fadeInUp.initial}
           animate={fadeInUp.animate}
-          transition={{ delay: 0.4, duration: 0.6 }}
+          transition={{ delay: 0.45, duration: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <motion.div

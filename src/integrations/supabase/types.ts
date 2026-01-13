@@ -206,6 +206,8 @@ export type Database = {
           id: string
           name: string
           subtitle: string
+          tagline: string | null
+          trust_badges: string[] | null
           updated_at: string | null
           video_url: string | null
         }
@@ -217,6 +219,8 @@ export type Database = {
           id?: string
           name: string
           subtitle: string
+          tagline?: string | null
+          trust_badges?: string[] | null
           updated_at?: string | null
           video_url?: string | null
         }
@@ -228,6 +232,8 @@ export type Database = {
           id?: string
           name?: string
           subtitle?: string
+          tagline?: string | null
+          trust_badges?: string[] | null
           updated_at?: string | null
           video_url?: string | null
         }
@@ -236,6 +242,8 @@ export type Database = {
       pricing_plans: {
         Row: {
           created_at: string | null
+          cta_text: string | null
+          deliverables: string[] | null
           description: string
           display_order: number
           features: string[]
@@ -249,6 +257,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          cta_text?: string | null
+          deliverables?: string[] | null
           description: string
           display_order: number
           features?: string[]
@@ -262,6 +272,8 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          cta_text?: string | null
+          deliverables?: string[] | null
           description?: string
           display_order?: number
           features?: string[]
@@ -312,7 +324,9 @@ export type Database = {
       }
       projects: {
         Row: {
+          architecture_summary: string | null
           category: string | null
+          category_tags: string[] | null
           challenges: string
           created_at: string | null
           detailed_description: string
@@ -321,9 +335,15 @@ export type Database = {
           featured: boolean | null
           github_url: string | null
           id: string
+          key_features: string[] | null
           live_url: string | null
+          problem_statement: string | null
+          results_impact: string | null
           role: string | null
+          security_features: string[] | null
           short_description: string
+          slug: string | null
+          solution_description: string | null
           status: string | null
           team_size: string | null
           technologies: string[] | null
@@ -332,7 +352,9 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          architecture_summary?: string | null
           category?: string | null
+          category_tags?: string[] | null
           challenges: string
           created_at?: string | null
           detailed_description: string
@@ -341,9 +363,15 @@ export type Database = {
           featured?: boolean | null
           github_url?: string | null
           id?: string
+          key_features?: string[] | null
           live_url?: string | null
+          problem_statement?: string | null
+          results_impact?: string | null
           role?: string | null
+          security_features?: string[] | null
           short_description: string
+          slug?: string | null
+          solution_description?: string | null
           status?: string | null
           team_size?: string | null
           technologies?: string[] | null
@@ -352,7 +380,9 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          architecture_summary?: string | null
           category?: string | null
+          category_tags?: string[] | null
           challenges?: string
           created_at?: string | null
           detailed_description?: string
@@ -361,9 +391,15 @@ export type Database = {
           featured?: boolean | null
           github_url?: string | null
           id?: string
+          key_features?: string[] | null
           live_url?: string | null
+          problem_statement?: string | null
+          results_impact?: string | null
           role?: string | null
+          security_features?: string[] | null
           short_description?: string
+          slug?: string | null
+          solution_description?: string | null
           status?: string | null
           team_size?: string | null
           technologies?: string[] | null
@@ -375,32 +411,44 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          default_description: string | null
+          default_og_image: string | null
           favicon_url: string | null
           id: string
           logo_url: string | null
           maintenance_message: string | null
           maintenance_mode: boolean | null
+          resume_url: string | null
           site_title: string
+          twitter_handle: string | null
           updated_at: string | null
           updated_by: string | null
         }
         Insert: {
+          default_description?: string | null
+          default_og_image?: string | null
           favicon_url?: string | null
           id?: string
           logo_url?: string | null
           maintenance_message?: string | null
           maintenance_mode?: boolean | null
+          resume_url?: string | null
           site_title?: string
+          twitter_handle?: string | null
           updated_at?: string | null
           updated_by?: string | null
         }
         Update: {
+          default_description?: string | null
+          default_og_image?: string | null
           favicon_url?: string | null
           id?: string
           logo_url?: string | null
           maintenance_message?: string | null
           maintenance_mode?: boolean | null
+          resume_url?: string | null
           site_title?: string
+          twitter_handle?: string | null
           updated_at?: string | null
           updated_by?: string | null
         }

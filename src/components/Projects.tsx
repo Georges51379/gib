@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ExternalLink, Github, ArrowRight } from "lucide-react";
+import { ExternalLink, Github, ArrowRight, User, Users, UserCheck } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useMemo } from "react";
@@ -10,6 +10,26 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "./ui/skeleton";
 import DOMPurify from "dompurify";
+import { Badge } from "./ui/badge";
+
+// Role icon mapping
+const getRoleIcon = (role: string) => {
+  const lowerRole = role?.toLowerCase() || '';
+  if (lowerRole.includes('lead') || lowerRole.includes('senior')) return UserCheck;
+  if (lowerRole.includes('team') || lowerRole.includes('contributor')) return Users;
+  return User;
+};
+
+// Role display mapping
+const getRoleDisplay = (role: string): string => {
+  if (!role) return 'Solo Developer';
+  const lowerRole = role.toLowerCase();
+  if (lowerRole.includes('lead')) return 'Lead';
+  if (lowerRole.includes('senior')) return 'Senior';
+  if (lowerRole.includes('team') || lowerRole.includes('contributor')) return 'Team';
+  if (lowerRole.includes('solo') || lowerRole.includes('full')) return 'Solo';
+  return 'Solo';
+};
 
 export const Projects = () => {
   const ref = useRef(null);
@@ -137,17 +157,42 @@ export const Projects = () => {
 
               {/* Content */}
               <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
+                {/* Title Row with Role Badge */}
+                <div className="flex items-start justify-between mb-3 gap-2">
                   <h3 className="text-2xl font-bold">{project.title}</h3>
-                  <span className="text-sm text-muted-foreground">{project.duration}</span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {(() => {
+                      const RoleIcon = getRoleIcon(project.role);
+                      return (
+                        <Badge variant="outline" className="text-xs flex items-center gap-1">
+                          <RoleIcon className="h-3 w-3" />
+                          {getRoleDisplay(project.role)}
+                        </Badge>
+                      );
+                    })()}
+                  </div>
                 </div>
+
+                {/* Category Tags */}
+                {project.category_tags && project.category_tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {project.category_tags.map((tag: string) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-0.5 text-xs font-medium rounded bg-secondary/20 text-secondary"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 
-                <p className="text-muted-foreground mb-4 leading-relaxed">{project.short_description}</p>
+                <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-3">{project.short_description}</p>
                 
+                {/* Technologies */}
                 <div className="mb-4">
-                  <p className="text-sm font-semibold mb-2">Technologies:</p>
                   <div className="flex flex-wrap gap-2">
-                    {(project.technologies || []).map((tech) => (
+                    {(project.technologies || []).slice(0, 5).map((tech) => (
                       <motion.span
                         key={tech}
                         className="px-3 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary"
@@ -156,30 +201,40 @@ export const Projects = () => {
                         {tech}
                       </motion.span>
                     ))}
+                    {(project.technologies || []).length > 5 && (
+                      <span className="px-3 py-1 text-xs font-medium rounded-full bg-muted text-muted-foreground">
+                        +{project.technologies.length - 5} more
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <p className="text-sm font-semibold mb-1">Challenges:</p>
-                  <div
-                    className="prose prose-invert max-w-none text-sm text-muted-foreground leading-relaxed [&>p]:mb-3"
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.challenges || "") }}
-                  />
-                </div>
+                {/* Duration */}
+                <p className="text-sm text-muted-foreground mb-4">{project.duration}</p>
 
-                <Link to={`/project/${project.id}`}>
-                  <motion.div 
-                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    whileHover={{ scale: 1.02 }} 
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button variant="outline" className="w-full group/btn border-primary/30 hover:border-primary hover:bg-primary/10">
-                      Read More
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Link to={`/project/${project.id}`} className="flex-1">
+                    <Button variant="default" className="w-full gradient-bg group/btn">
+                      View Case Study
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                     </Button>
-                  </motion.div>
-                </Link>
+                  </Link>
+                  {project.live_url && (
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      className="border-primary/30 hover:border-primary hover:bg-primary/10"
+                      asChild
+                    >
+                      <a href={project.live_url} target="_blank" rel="noopener noreferrer" aria-label="Live Demo">
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
               </div>
+
             </motion.div>
           ))}
         </motion.div>

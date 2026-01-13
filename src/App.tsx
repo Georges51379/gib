@@ -11,10 +11,19 @@ import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import Index from "./pages/Index";
-import ProjectDetail from "./pages/ProjectDetail";
+
+// Pages
+import HomePage from "./pages/HomePage";
+import AboutPage from "./pages/AboutPage";
+import ProjectsPage from "./pages/ProjectsPage";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
+import ServicesPage from "./pages/ServicesPage";
+import ContactPage from "./pages/ContactPage";
 import DevTools from "./pages/DevTools";
 import NotFound from "./pages/NotFound";
+import Maintenance from "./pages/Maintenance";
+
+// Admin Pages
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import Settings from "./pages/admin/Settings";
@@ -29,7 +38,7 @@ import TestimonialsManager from "./pages/admin/TestimonialsManager";
 import Analytics from "./pages/admin/Analytics";
 import TechStackManager from "./pages/admin/TechStackManager";
 import SkillsTimelineManager from "./pages/admin/SkillsTimelineManager";
-import Maintenance from "./pages/Maintenance";
+
 import { SEO } from "./components/SEO";
 import { usePageViewTracker } from "./hooks/usePageViewTracker";
 
@@ -80,10 +89,20 @@ const AppContent = () => {
       <ScrollProgressBar />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Index />} />
-          <Route path="/project/:id" element={<ProjectDetail />} />
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/dev-tools" element={<DevTools />} />
           <Route path="/maintenance" element={<Maintenance />} />
+          
+          {/* Legacy route redirect */}
+          <Route path="/project/:id" element={<ProjectDetailPage />} />
+          
+          {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
@@ -98,7 +117,8 @@ const AppContent = () => {
           <Route path="/admin/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
           <Route path="/admin/tech-stack" element={<ProtectedRoute><TechStackManager /></ProtectedRoute>} />
           <Route path="/admin/timeline" element={<ProtectedRoute><SkillsTimelineManager /></ProtectedRoute>} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          
+          {/* Catch-all 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AnimatePresence>

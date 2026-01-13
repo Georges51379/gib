@@ -1,25 +1,29 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Menu, X, Moon, Sun, Wrench, Home, User, GraduationCap, Briefcase, DollarSign, MessageSquare, Mail, Github, Linkedin, Twitter, Wrench } from "lucide-react";
+import { Menu, X, Moon, Sun, Home, User, Briefcase, DollarSign, Mail, Github, Linkedin, Twitter, Wrench } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useSmartTheme } from "@/hooks/useSmartTheme";
 
-const navLinks = [
-  { name: "Home", href: "#home", icon: Home },
-  { name: "About", href: "#about", icon: User },
-  { name: "Education", href: "#education", icon: GraduationCap },
-  { name: "Projects", href: "#projects", icon: Briefcase },
-  { name: "Services", href: "#pricing", icon: DollarSign },
-  { name: "Testimonials", href: "#testimonials", icon: MessageSquare },
-  { name: "Contact", href: "#contact", icon: Mail },
-  { name: "Dev Tools", href: "/devtools", icon: Wrench }
+interface NavLink {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const navLinks: NavLink[] = [
+  { name: "Home", href: "/", icon: Home },
+  { name: "About", href: "/about", icon: User },
+  { name: "Projects", href: "/projects", icon: Briefcase },
+  { name: "Services", href: "/services", icon: DollarSign },
+  { name: "Contact", href: "/contact", icon: Mail },
+  { name: "Dev Tools", href: "/dev-tools", icon: Wrench },
 ];
 
 const socialLinks = [
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+  { icon: Github, href: "https://github.com/Georges51379", label: "GitHub" },
+  { icon: Linkedin, href: "https://linkedin.com/in/georges-boutros-534960211", label: "LinkedIn" },
   { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
 ];
 
@@ -29,7 +33,6 @@ export const Navbar = () => {
   const { data: settings } = useSiteSettings();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("#home");
   const { isDark: isDarkMode, toggleTheme } = useSmartTheme();
 
   const logoText = settings?.logo_url 
@@ -39,19 +42,6 @@ export const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      
-      // Update active section based on scroll position
-      const sections = navLinks.map(link => link.href);
-      for (const section of sections) {
-        const element = document.querySelector(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 100 && rect.bottom >= 100) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -71,23 +61,20 @@ export const Navbar = () => {
 
   const handleNavClick = (href: string) => {
     setIsMobileMenuOpen(false);
-    setActiveSection(href);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    navigate(href);
   };
 
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (location.pathname !== '/') {
-      navigate('/');
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 100);
-    } else {
-      handleNavClick("#home");
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const isActiveRoute = (href: string) => {
+    if (href === '/') {
+      return location.pathname === '/';
     }
+    return location.pathname.startsWith(href);
   };
 
   return (
@@ -128,38 +115,26 @@ export const Navbar = () => {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-1">
               {navLinks.map((link) => (
-                <motion.a
+                <Link
                   key={link.name}
-                  href={link.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(link.href);
-                  }}
-                  className={`px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md relative ${
-                    activeSection === link.href 
+                  to={link.href}
+                  className={`px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md relative flex items-center gap-1.5 ${
+                    isActiveRoute(link.href) 
                       ? "text-primary" 
                       : "text-foreground hover:text-primary"
                   }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                 >
+                  {link.name === "Dev Tools" && <Wrench className="w-4 h-4" />}
                   {link.name}
-                  {activeSection === link.href && (
+                  {isActiveRoute(link.href) && (
                     <motion.div
-                      layoutId="activeSection"
+                      layoutId="activeRoute"
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
-                </motion.a>
+                </Link>
               ))}
-              <Link
-                to="/dev-tools"
-                className="px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md text-foreground hover:text-primary flex items-center gap-1.5"
-              >
-                <Wrench className="w-4 h-4" />
-                Dev Tools
-              </Link>
             </div>
 
             {/* Dark Mode Toggle & Mobile Menu Button */}
@@ -262,16 +237,11 @@ export const Navbar = () => {
                   >
                     {navLinks.map((link) => {
                       const Icon = link.icon;
-                      const isActive = activeSection === link.href;
+                      const isActive = isActiveRoute(link.href);
                       
                       return (
-                        <motion.a
+                        <motion.div
                           key={link.name}
-                          href={link.href}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleNavClick(link.href);
-                          }}
                           variants={{
                             open: {
                               y: 0,
@@ -288,17 +258,20 @@ export const Navbar = () => {
                               }
                             }
                           }}
-                          className={`flex items-center space-x-4 p-4 rounded-lg text-lg font-medium transition-all duration-300 ${
-                            isActive 
-                              ? "gradient-bg text-white shadow-lg" 
-                              : "hover:bg-accent hover:text-accent-foreground"
-                          }`}
-                          whileHover={{ x: 8 }}
-                          whileTap={{ scale: 0.98 }}
                         >
-                          <Icon className="h-5 w-5" />
-                          <span>{link.name}</span>
-                        </motion.a>
+                          <Link
+                            to={link.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={`flex items-center space-x-4 p-4 rounded-lg text-lg font-medium transition-all duration-300 ${
+                              isActive 
+                                ? "gradient-bg text-white shadow-lg" 
+                                : "hover:bg-accent hover:text-accent-foreground"
+                            }`}
+                          >
+                            <Icon className="h-5 w-5" />
+                            <span>{link.name}</span>
+                          </Link>
+                        </motion.div>
                       );
                     })}
                   </motion.div>
