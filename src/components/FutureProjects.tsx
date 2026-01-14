@@ -5,7 +5,31 @@ import { staggerContainer, staggerItem, fadeInUp } from "@/utils/animations";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "./ui/skeleton";
-import DOMPurify from "dompurify";
+
+/**
+ * Enterprise-safe preview renderer:
+ * - Handles BOTH real HTML (<p>...</p>) and escaped HTML (&lt;p&gt;...&lt;/p&gt;)
+ * - Strips tags and returns clean plain text
+ * - Prevents XSS (no dangerouslySetInnerHTML)
+ */
+const toPlainText = (input?: string | null) => {
+  if (!input) return "";
+
+  const str = String(input);
+
+  // If it's escaped HTML, decode entities first (e.g. &lt;p&gt; -> <p>)
+  const decoded =
+    str.includes("&lt;") || str.includes("&gt;") || str.includes("&amp;")
+      ? new DOMParser().parseFromString(str, "text/html").documentElement
+          .textContent || str
+      : str;
+
+  // Strip any HTML tags and return only text
+  const text =
+    new DOMParser().parseFromString(decoded, "text/html").body.textContent || "";
+
+  return text.replace(/\s+/g, " ").trim();
+};
 
 export const FutureProjects = () => {
   const ref = useRef(null);
@@ -17,7 +41,6 @@ export const FutureProjects = () => {
       const { data, error } = await supabase
         .from("future_projects")
         .select("*")
-        .eq("status", "active") // ✅ only active
         .order("display_order", { ascending: true });
 
       if (error) throw error;
@@ -45,9 +68,6 @@ export const FutureProjects = () => {
       </section>
     );
   }
-
-  // ✅ if no future projects, don’t render the whole section
-  if (!futureProjects || futureProjects.length === 0) return null;
 
   return (
     <section className="section-padding bg-[hsl(var(--section-bg))]" ref={ref}>
@@ -77,21 +97,26 @@ export const FutureProjects = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {futureProjects.map((project: any, index: number) => {
-            const IconComponent = iconMap?.[project.icon_name] || Icons.Lightbulb;
+            const IconComponent = iconMap[project.icon_name] || Icons.Lightbulb;
+
+            // ✅ Clean, safe, readable preview (no <p> showing)
+            const cleanDescription = toPlainText(project.description);
 
             return (
               <motion.div
-                key={project.id ?? project.title}
+                key={project.title}
                 variants={staggerItem}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className="p-8 rounded-2xl bg-card border border-border shadow-lg hover:border-primary/30 hover:shadow-[0_0_30px_rgba(255,215,0,0.10)] transition-all"
+                className="p-8 rounded-2xl bg-card border border-border shadow-lg"
               >
                 <div className="flex items-center justify-between mb-4">
                   <motion.div
                     initial={{ scale: 0, rotate: -180 }}
                     animate={
-                      isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }
+                      isInView
+                        ? { scale: 1, rotate: 0 }
+                        : { scale: 0, rotate: -180 }
                     }
                     transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
                   >
@@ -99,7 +124,9 @@ export const FutureProjects = () => {
                   </motion.div>
 
                   <motion.span
-                    className={`text-sm font-semibold ${getStatusColor(project.project_status)}`}
+                    className={`text-sm font-semibold ${getStatusColor(
+                      project.project_status
+                    )}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
                     transition={{ delay: 0.6 + index * 0.1 }}
@@ -110,32 +137,33 @@ export const FutureProjects = () => {
 
                 <h3 className="text-xl font-bold mb-3">{project.title}</h3>
 
-                <p
-                  className="text-muted-foreground mb-4 leading-relaxed"
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(project.description || "", { ALLOWED_TAGS: [] }),
-                  }}
-                />
+                <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-4">
+                  {cleanDescription}
+                </p>
 
-                {(project.features || []).length > 0 && (
-                  <div>
-                    <p className="text-sm font-semibold mb-2">Expected Features:</p>
-                    <ul className="space-y-1">
-                      {(project.features || []).map((feature: string, featureIndex: number) => (
+                <div>
+                  <p className="text-sm font-semibold mb-2">Expected Features:</p>
+                  <ul className="space-y-1">
+                    {(project.features || []).map(
+                      (feature: string, featureIndex: number) => (
                         <motion.li
-                          key={`${project.id}-${featureIndex}`}
+                          key={`${feature}-${featureIndex}`}
                           className="text-sm text-muted-foreground flex items-start gap-2"
                           initial={{ opacity: 0, x: -10 }}
-                          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-                          transition={{ delay: 0.7 + index * 0.1 + featureIndex * 0.05 }}
+                          animate={
+                            isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }
+                          }
+                          transition={{
+                            delay: 0.7 + index * 0.1 + featureIndex * 0.05,
+                          }}
                         >
                           <span className="text-primary mt-1">•</span>
                           <span>{feature}</span>
                         </motion.li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                      )
+                    )}
+                  </ul>
+                </div>
               </motion.div>
             );
           })}
