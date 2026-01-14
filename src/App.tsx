@@ -45,9 +45,9 @@ import { usePageViewTracker } from "./hooks/usePageViewTracker";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { data: settings, isLoading } = useSiteSettings();
+  const { data: settings } = useSiteSettings();
   const location = useLocation();
-  
+
   // Track page views for analytics
   usePageViewTracker();
 
@@ -55,28 +55,27 @@ const AppContent = () => {
     if (settings?.site_title) {
       document.title = settings.site_title;
     }
-    
+
     if (settings?.favicon_url) {
       let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
       if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
+        link = document.createElement("link");
+        link.rel = "icon";
         document.head.appendChild(link);
       }
       link.href = settings.favicon_url;
     }
   }, [settings]);
 
-  // Check maintenance mode with explicit redirect logic
-  const isAdminRoute = location.pathname.startsWith('/admin');
-  const isMaintenancePage = location.pathname === '/maintenance';
-  
-  // Redirect to maintenance page if mode is enabled
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isMaintenancePage = location.pathname === "/maintenance";
+
+  // Redirect to maintenance if enabled
   if (settings?.maintenance_mode === true && !isAdminRoute && !isMaintenancePage) {
     return <Navigate to="/maintenance" replace />;
   }
-  
-  // Redirect away from maintenance page if mode is disabled
+
+  // Redirect away from maintenance if disabled
   if (settings?.maintenance_mode === false && isMaintenancePage) {
     return <Navigate to="/" replace />;
   }
@@ -87,21 +86,25 @@ const AppContent = () => {
       <LoadingScreen />
       <ScrollToTop />
       <ScrollProgressBar />
+
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
+
+          {/* ✅ Keep ONLY this as the project details route */}
           <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/dev-tools" element={<DevTools />} />
           <Route path="/maintenance" element={<Maintenance />} />
-          
-          {/* Legacy route redirect */}
-          <Route path="/project/:id" element={<ProjectDetailPage />} />
-          
+
+          {/* ✅ Legacy route: redirect old /project/:id to /projects/:id */}
+          <Route path="/project/:id" element={<LegacyProjectRedirect />} />
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -117,13 +120,24 @@ const AppContent = () => {
           <Route path="/admin/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
           <Route path="/admin/tech-stack" element={<ProtectedRoute><TechStackManager /></ProtectedRoute>} />
           <Route path="/admin/timeline" element={<ProtectedRoute><SkillsTimelineManager /></ProtectedRoute>} />
-          
+
           {/* Catch-all 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AnimatePresence>
     </>
   );
+};
+
+/**
+ * Redirects old route `/project/:id` → `/projects/:id`
+ * Your ProjectDetailPage already supports fetching by slug OR id, so this works perfectly.
+ */
+const LegacyProjectRedirect = () => {
+  const location = useLocation();
+  const parts = location.pathname.split("/");
+  const id = parts?.[2]; // /project/:id
+  return <Navigate to={`/projects/${id}`} replace />;
 };
 
 const App = () => (
