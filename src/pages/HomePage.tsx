@@ -73,6 +73,7 @@ const HomePage = () => {
   const title = heroData?.name
     ? `${heroData.name} | Full-Stack Developer & Data Engineer`
     : "Georges Boutros | Full-Stack Developer & Data Engineer";
+
   const description =
     heroData?.description ||
     "Full Stack Developer & Data Engineer building modern, data-driven, and scalable web applications.";
@@ -102,12 +103,25 @@ const HomePage = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
 
-  const sanitizeFutureDescription = (html: string) =>
-    DOMPurify.sanitize(html || "", {
+  /**
+   * ✅ Enterprise-safe HTML rendering for editor content:
+   * - Decodes escaped HTML entities (e.g. &lt;p&gt;) into real HTML
+   * - Sanitizes with strict allowlist (NO attributes)
+   */
+  const decodeHtmlEntities = (value?: string | null) => {
+    if (!value) return "";
+    // This converts "&lt;p&gt;Hello&lt;/p&gt;" -> "<p>Hello</p>"
+    return new DOMParser().parseFromString(String(value), "text/html").documentElement.textContent || String(value);
+  };
+
+  const sanitizeFutureDescription = (input?: string | null) => {
+    const decoded = decodeHtmlEntities(input);
+    return DOMPurify.sanitize(decoded, {
       // strict allowlist: safe formatting only (enterprise-friendly)
       ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "ul", "ol", "li"],
       ALLOWED_ATTR: [],
     });
+  };
 
   return (
     <div className="min-h-screen">
@@ -205,7 +219,7 @@ const HomePage = () => {
                       </CardHeader>
 
                       <CardContent>
-                        {/* ✅ HTML-safe rendering (no tags displayed) */}
+                        {/* ✅ HTML-safe rendering (fixes escaped tags too) */}
                         <div
                           className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-3 [&_p]:inline [&_p]:m-0"
                           dangerouslySetInnerHTML={{ __html: sanitizeFutureDescription(fp.description) }}
@@ -257,9 +271,9 @@ const HomePage = () => {
             </div>
             <Card className="p-6">
               <p className="text-lg text-muted-foreground leading-relaxed">
-                I'm a Full-Stack Developer and Data Engineer with a passion for building secure, scalable web
-                applications. With expertise in React, Node.js, Python, and cloud technologies, I help businesses
-                transform their ideas into production-ready solutions.
+                I'm a Full-Stack Developer and Data Engineer with a passion for building secure, scalable web applications.
+                With expertise in React, Node.js, Python, and cloud technologies, I help businesses transform their ideas
+                into production-ready solutions.
               </p>
             </Card>
           </div>
