@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FutureProjects } from "@/components/FutureProjects"; // ✅ added
 
 const ProjectsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,13 +27,13 @@ const ProjectsPage = () => {
   const [techFilter, setTechFilter] = useState<string>("all");
 
   const { data: projects, isLoading } = useQuery({
-    queryKey: ['all-projects'],
+    queryKey: ["all-projects"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('status', 'active')
-        .order('display_order', { ascending: true });
+        .from("projects")
+        .select("*")
+        .eq("status", "active")
+        .order("display_order", { ascending: true });
       if (error) throw error;
       return data;
     },
@@ -41,47 +42,48 @@ const ProjectsPage = () => {
   // Extract unique categories and technologies
   const { categories, technologies } = useMemo(() => {
     if (!projects) return { categories: [], technologies: [] };
-    
+
     const catSet = new Set<string>();
     const techSet = new Set<string>();
-    
-    projects.forEach(project => {
-      project.category_tags?.forEach(tag => catSet.add(tag));
-      project.technologies?.forEach(tech => techSet.add(tech));
+
+    projects.forEach((project) => {
+      project.category_tags?.forEach((tag: string) => catSet.add(tag));
+      project.technologies?.forEach((tech: string) => techSet.add(tech));
     });
-    
+
     return {
       categories: Array.from(catSet).sort(),
-      technologies: Array.from(techSet).sort()
+      technologies: Array.from(techSet).sort(),
     };
   }, [projects]);
 
   // Filter projects
   const filteredProjects = useMemo(() => {
     if (!projects) return [];
-    
-    return projects.filter(project => {
-      const matchesSearch = searchQuery === "" || 
+
+    return projects.filter((project) => {
+      const matchesSearch =
+        searchQuery === "" ||
         project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.short_description.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesCategory = categoryFilter === "all" || 
-        project.category_tags?.includes(categoryFilter);
-      
-      const matchesTech = techFilter === "all" || 
-        project.technologies?.includes(techFilter);
-      
+
+      const matchesCategory =
+        categoryFilter === "all" || project.category_tags?.includes(categoryFilter);
+
+      const matchesTech = techFilter === "all" || project.technologies?.includes(techFilter);
+
       return matchesSearch && matchesCategory && matchesTech;
     });
   }, [projects, searchQuery, categoryFilter, techFilter]);
 
   // Separate featured and regular projects
-  const featuredProjects = filteredProjects.filter(p => p.featured);
-  const regularProjects = filteredProjects.filter(p => !p.featured);
+  const featuredProjects = filteredProjects.filter((p) => p.featured);
+  const regularProjects = filteredProjects.filter((p) => !p.featured);
 
   const siteUrl = window.location.origin;
   const title = "Projects | Georges Boutros - Portfolio";
-  const description = "Explore my portfolio of full-stack web applications, data engineering projects, and enterprise solutions built with React, Node.js, Python, and cloud technologies.";
+  const description =
+    "Explore my portfolio of full-stack web applications, data engineering projects, and enterprise solutions built with React, Node.js, Python, and cloud technologies.";
 
   const schema = {
     "@context": "https://schema.org",
@@ -91,36 +93,41 @@ const ProjectsPage = () => {
     "url": `${siteUrl}/projects`,
     "mainEntity": {
       "@type": "ItemList",
-      "itemListElement": projects?.map((project, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "item": {
-          "@type": "CreativeWork",
-          "name": project.title,
-          "description": project.short_description,
-          "url": `${siteUrl}/projects/${project.slug || project.id}`
-        }
-      })) || []
-    }
+      "itemListElement":
+        projects?.map((project: any, index: number) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "item": {
+            "@type": "CreativeWork",
+            "name": project.title,
+            "description": project.short_description,
+            "url": `${siteUrl}/projects/${project.slug || project.id}`,
+          },
+        })) || [],
+    },
   };
 
   const getRoleIcon = (role: string | null) => {
     switch (role?.toLowerCase()) {
-      case 'solo': return <User className="w-3 h-3" />;
-      case 'team': return <Users className="w-3 h-3" />;
-      case 'lead': return <UserCheck className="w-3 h-3" />;
-      default: return <User className="w-3 h-3" />;
+      case "solo":
+        return <User className="w-3 h-3" />;
+      case "team":
+        return <Users className="w-3 h-3" />;
+      case "lead":
+        return <UserCheck className="w-3 h-3" />;
+      default:
+        return <User className="w-3 h-3" />;
     }
   };
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   return (
     <div className="min-h-screen">
-      <SEO 
+      <SEO
         title={title}
         description={description}
         canonical={`${siteUrl}/projects`}
@@ -129,6 +136,7 @@ const ProjectsPage = () => {
         schema={schema}
       />
       <Navbar />
+
       <main className="pt-24 pb-16">
         <div className="container-custom">
           {/* Header */}
@@ -141,7 +149,8 @@ const ProjectsPage = () => {
               My <span className="gradient-text">Projects</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A collection of enterprise-grade web applications, data solutions, and innovative tools I've built.
+              A collection of enterprise-grade web applications, data solutions, and innovative
+              tools I've built.
             </p>
           </motion.div>
 
@@ -169,19 +178,24 @@ const ProjectsPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map(cat => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+
               <Select value={techFilter} onValueChange={setTechFilter}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Technology" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Technologies</SelectItem>
-                  {technologies.map(tech => (
-                    <SelectItem key={tech} value={tech}>{tech}</SelectItem>
+                  {technologies.map((tech) => (
+                    <SelectItem key={tech} value={tech}>
+                      {tech}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -196,7 +210,7 @@ const ProjectsPage = () => {
                 Featured Projects
               </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredProjects.map((project, index) => (
+                {featuredProjects.map((project: any, index: number) => (
                   <motion.div
                     key={project.id}
                     variants={cardVariants}
@@ -206,8 +220,8 @@ const ProjectsPage = () => {
                   >
                     <Card className="group h-full overflow-hidden hover:shadow-xl transition-all duration-300 border-primary/20">
                       <div className="aspect-video overflow-hidden relative">
-                        <img 
-                          src={project.thumbnail_url} 
+                        <img
+                          src={project.thumbnail_url}
                           alt={project.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           loading="lazy"
@@ -218,6 +232,7 @@ const ProjectsPage = () => {
                           </Badge>
                         </div>
                       </div>
+
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{project.title}</CardTitle>
@@ -229,20 +244,21 @@ const ProjectsPage = () => {
                           )}
                         </div>
                       </CardHeader>
+
                       <CardContent>
                         <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                           {project.short_description}
                         </p>
                         <div className="flex flex-wrap gap-1 mb-4">
-                          {project.category_tags?.slice(0, 3).map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                          {project.category_tags?.slice(0, 3).map((tag: string) => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
                           ))}
                         </div>
                         <div className="flex gap-2">
                           <Button asChild size="sm" className="flex-1">
-                            <Link to={`/projects/${project.slug || project.id}`}>
-                              View Case Study
-                            </Link>
+                            <Link to={`/projects/${project.slug || project.id}`}>View Case Study</Link>
                           </Button>
                           {project.live_url && (
                             <Button asChild size="sm" variant="outline">
@@ -265,7 +281,7 @@ const ProjectsPage = () => {
             <div>
               <h2 className="text-2xl font-bold mb-6">All Projects</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {regularProjects.map((project, index) => (
+                {regularProjects.map((project: any, index: number) => (
                   <motion.div
                     key={project.id}
                     variants={cardVariants}
@@ -275,13 +291,14 @@ const ProjectsPage = () => {
                   >
                     <Card className="group h-full overflow-hidden hover:shadow-lg transition-all duration-300">
                       <div className="aspect-video overflow-hidden">
-                        <img 
-                          src={project.thumbnail_url} 
+                        <img
+                          src={project.thumbnail_url}
                           alt={project.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           loading="lazy"
                         />
                       </div>
+
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{project.title}</CardTitle>
@@ -293,20 +310,21 @@ const ProjectsPage = () => {
                           )}
                         </div>
                       </CardHeader>
+
                       <CardContent>
                         <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                           {project.short_description}
                         </p>
                         <div className="flex flex-wrap gap-1 mb-4">
-                          {project.category_tags?.slice(0, 3).map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                          {project.category_tags?.slice(0, 3).map((tag: string) => (
+                            <Badge key={tag} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
                           ))}
                         </div>
                         <div className="flex gap-2">
                           <Button asChild size="sm" variant="outline" className="flex-1">
-                            <Link to={`/projects/${project.slug || project.id}`}>
-                              View Details
-                            </Link>
+                            <Link to={`/projects/${project.slug || project.id}`}>View Details</Link>
                           </Button>
                           {project.live_url && (
                             <Button asChild size="sm" variant="outline">
@@ -328,8 +346,8 @@ const ProjectsPage = () => {
           {filteredProjects.length === 0 && !isLoading && (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg">No projects match your filters.</p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="mt-4"
                 onClick={() => {
                   setSearchQuery("");
@@ -342,7 +360,11 @@ const ProjectsPage = () => {
             </div>
           )}
         </div>
+
+        {/* ✅ Future Projects section */}
+        <FutureProjects />
       </main>
+
       <Footer />
       <BackToTop />
     </div>

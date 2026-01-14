@@ -12,13 +12,14 @@ export const FutureProjects = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const { data: futureProjects = [], isLoading } = useQuery({
-    queryKey: ['future-projects'],
+    queryKey: ["future-projects"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('future_projects')
-        .select('*')
-        .order('display_order', { ascending: true });
-      
+        .from("future_projects")
+        .select("*")
+        .eq("status", "active") // ✅ only active
+        .order("display_order", { ascending: true });
+
       if (error) throw error;
       return data;
     },
@@ -45,17 +46,20 @@ export const FutureProjects = () => {
     );
   }
 
+  // ✅ if no future projects, don’t render the whole section
+  if (!futureProjects || futureProjects.length === 0) return null;
+
   return (
     <section className="section-padding bg-[hsl(var(--section-bg))]" ref={ref}>
       <div className="container-custom">
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={fadeInUp.initial}
           animate={isInView ? fadeInUp.animate : fadeInUp.initial}
           transition={{ duration: 0.6 }}
         >
           <h2 className="gradient-text mb-4">Future Projects</h2>
-          <motion.div 
+          <motion.div
             className="w-20 h-1 gradient-bg mx-auto rounded-full"
             initial={{ scaleX: 0 }}
             animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
@@ -73,24 +77,28 @@ export const FutureProjects = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {futureProjects.map((project: any, index: number) => {
-            const IconComponent = iconMap[project.icon_name] || Icons.Lightbulb;
+            const IconComponent = iconMap?.[project.icon_name] || Icons.Lightbulb;
+
             return (
               <motion.div
-                key={project.title}
+                key={project.id ?? project.title}
                 variants={staggerItem}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className="p-8 rounded-2xl bg-card border border-border shadow-lg"
+                className="p-8 rounded-2xl bg-card border border-border shadow-lg hover:border-primary/30 hover:shadow-[0_0_30px_rgba(255,215,0,0.10)] transition-all"
               >
                 <div className="flex items-center justify-between mb-4">
                   <motion.div
                     initial={{ scale: 0, rotate: -180 }}
-                    animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
+                    animate={
+                      isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }
+                    }
                     transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
                   >
                     <IconComponent className="h-12 w-12 text-primary" />
                   </motion.div>
-                  <motion.span 
+
+                  <motion.span
                     className={`text-sm font-semibold ${getStatusColor(project.project_status)}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
@@ -101,30 +109,33 @@ export const FutureProjects = () => {
                 </div>
 
                 <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-                <p 
+
+                <p
                   className="text-muted-foreground mb-4 leading-relaxed"
-                  dangerouslySetInnerHTML={{ 
-                    __html: DOMPurify.sanitize(project.description, { ALLOWED_TAGS: [] }) 
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(project.description || "", { ALLOWED_TAGS: [] }),
                   }}
                 />
 
-                <div>
-                  <p className="text-sm font-semibold mb-2">Expected Features:</p>
-                  <ul className="space-y-1">
-                    {(project.features || []).map((feature: string, featureIndex: number) => (
-                      <motion.li 
-                        key={feature} 
-                        className="text-sm text-muted-foreground flex items-start gap-2"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-                        transition={{ delay: 0.7 + index * 0.1 + featureIndex * 0.05 }}
-                      >
-                        <span className="text-primary mt-1">•</span>
-                        <span>{feature}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
+                {(project.features || []).length > 0 && (
+                  <div>
+                    <p className="text-sm font-semibold mb-2">Expected Features:</p>
+                    <ul className="space-y-1">
+                      {(project.features || []).map((feature: string, featureIndex: number) => (
+                        <motion.li
+                          key={`${project.id}-${featureIndex}`}
+                          className="text-sm text-muted-foreground flex items-start gap-2"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                          transition={{ delay: 0.7 + index * 0.1 + featureIndex * 0.05 }}
+                        >
+                          <span className="text-primary mt-1">•</span>
+                          <span>{feature}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </motion.div>
             );
           })}
