@@ -8,11 +8,67 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Plus, Pencil, XCircle, CheckCircle } from 'lucide-react';
 import DOMPurify from 'dompurify';
+
+const ALLOWED_TAGS = [
+  'p', 'br', 'strong', 'b', 'em', 'i', 'u',
+  'h1', 'h2', 'h3', 'h4',
+  'ul', 'ol', 'li',
+  'blockquote',
+  'code', 'pre',
+  'a',
+];
+
+const ALLOWED_ATTR = ['href', 'target', 'rel'];
+
+// Decode &lt;p&gt; into <p>
+const decodeHtmlEntities = (input: string) => {
+  if (!input) return '';
+  // Fast path: if no entity markers, return as-is
+  if (!/[&][a-zA-Z#0-9]+;/.test(input)) return input;
+
+  const txt = document.createElement('textarea');
+  txt.innerHTML = input;
+  return txt.value;
+};
+
+// Ensure links are safe (noopener) and sanitize
+const normalizeAndSanitizeHtml = (input: string) => {
+  const decoded = decodeHtmlEntities(input || '');
+
+  // If someone pasted plain text (no tags), wrap it to keep formatting consistent
+  const looksLikeHtml = /<\/?[a-z][\s\S]*>/i.test(decoded);
+  const html = looksLikeHtml ? decoded : `<p>${decoded}</p>`;
+
+  const clean = DOMPurify.sanitize(html, {
+    ALLOWED_TAGS,
+    ALLOWED_ATTR,
+    // Extra hardening
+    FORBID_TAGS: ['style', 'script', 'iframe', 'object', 'embed'],
+    FORBID_ATTR: ['style', 'onerror', 'onclick', 'onload'],
+  });
+
+  // Post-process <a> tags to enforce rel security
+  // DOMPurify can keep rel, but this ensures it always exists.
+  const container = document.createElement('div');
+  container.innerHTML = clean;
+
+  container.querySelectorAll('a').forEach((a) => {
+    const href = a.getAttribute('href') || '';
+    // block javascript: links defensively
+    if (href.trim().toLowerCase().startsWith('javascript:')) {
+      a.removeAttribute('href');
+    }
+    a.setAttribute('target', '_blank');
+    a.setAttribute('rel', 'noopener noreferrer');
+  });
+
+  return container.innerHTML;
+};
 
 export default function FutureProjectsManager() {
   const queryClient = useQueryClient();
@@ -47,43 +103,55 @@ export default function FutureProjectsManager() {
 
   const handleEdit = (project: any) => {
     setEditingId(project.id);
-    setTitle(project.title);
-    setDescription(project.description);
+    setTitle(project.title || '');
+    // ✅ decode entities for editor so you don't see &lt;p&gt; inside editor
+    setDescription(decodeHtmlEntities(project.description || ''));
     setProjectStatus(project.project_status || 'Planning');
     setFeatures(project.features?.join('\n') || '');
-    setIconName(project.icon_name);
+    setIconName(project.icon_name || 'Lightbulb');
     setIsOpen(true);
   };
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const featuresArray = features.split('\n').map((f) => f.trim()).filter(Boolean);
+      const featuresArray = features
+        .split('\n')
+        .map((f) => f.trim())
+        .filter(Boolean);
+
       const displayOrder = editingId
         ? (projects?.find((p) => p.id === editingId)?.display_order || 0)
         : (projects?.length || 0) + 1;
+
+      // ✅ ROOT FIX: normalize & sanitize BEFORE saving to DB
+      const safeDescription = normalizeAndSanitizeHtml(description);
+
+      if (!title.trim()) throw new Error('Title is required');
 
       if (editingId) {
         const { error } = await supabase
           .from('future_projects')
           .update({
-            title,
-            description,
+            title: title.trim(),
+            description: safeDescription,
             project_status: projectStatus,
             features: featuresArray,
-            icon_name: iconName,
+            icon_name: iconName?.trim() || 'Lightbulb',
           })
           .eq('id', editingId);
+
         if (error) throw error;
       } else {
         const { error } = await supabase.from('future_projects').insert({
-          title,
-          description,
+          title: title.trim(),
+          description: safeDescription,
           project_status: projectStatus,
           status: 'active',
           features: featuresArray,
-          icon_name: iconName,
+          icon_name: iconName?.trim() || 'Lightbulb',
           display_order: displayOrder,
         });
+
         if (error) throw error;
       }
     },
@@ -128,6 +196,7 @@ export default function FutureProjectsManager() {
             <h1 className="text-4xl font-bold">Future Projects</h1>
             <p className="text-muted-foreground mt-2">Manage your upcoming project ideas</p>
           </div>
+
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button onClick={resetForm}>
@@ -135,19 +204,26 @@ export default function FutureProjectsManager() {
                 Add Future Project
               </Button>
             </DialogTrigger>
+
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editingId ? 'Edit' : 'Add'} Future Project</DialogTitle>
               </DialogHeader>
+
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Title</Label>
                   <Input value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
+
                 <div className="space-y-2">
                   <Label>Description</Label>
                   <RichTextEditor content={description} onChange={setDescription} />
+                  <p className="text-xs text-muted-foreground">
+                    Tip: Formatting is allowed (bold, lists, headings, links). Unsafe HTML is automatically removed.
+                  </p>
                 </div>
+
                 <div className="space-y-2">
                   <Label>Project Status</Label>
                   <Select value={projectStatus} onValueChange={(v: any) => setProjectStatus(v)}>
@@ -160,6 +236,7 @@ export default function FutureProjectsManager() {
                     </SelectContent>
                   </Select>
                 </div>
+
                 <div className="space-y-2">
                   <Label>Features (one per line)</Label>
                   <textarea
@@ -169,11 +246,13 @@ export default function FutureProjectsManager() {
                     placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label>Icon Name</Label>
                   <Input value={iconName} onChange={(e) => setIconName(e.target.value)} placeholder="Lightbulb" />
                   <p className="text-xs text-muted-foreground">Use any Lucide icon name</p>
                 </div>
+
                 <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
                   {saveMutation.isPending ? 'Saving...' : 'Save'}
                 </Button>
@@ -198,10 +277,12 @@ export default function FutureProjectsManager() {
                       </Badge>
                     </div>
                   </div>
+
                   <div className="flex gap-2">
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(project)}>
                       <Pencil className="h-4 w-4" />
                     </Button>
+
                     {project.status === 'active' ? (
                       <Button variant="ghost" size="icon" onClick={() => softDeleteMutation.mutate(project.id)}>
                         <XCircle className="h-4 w-4" />
@@ -214,16 +295,21 @@ export default function FutureProjectsManager() {
                   </div>
                 </div>
               </CardHeader>
+
               <CardContent>
-                <div dangerouslySetInnerHTML={{ 
-                  __html: DOMPurify.sanitize(project.description, {
-                    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre'],
-                    ALLOWED_ATTR: ['href', 'target', 'rel']
-                  }) 
-                }} />
+                <div
+                  className="prose prose-sm dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{
+                    // ✅ render from DB safely
+                    __html: DOMPurify.sanitize(decodeHtmlEntities(project.description || ''), {
+                      ALLOWED_TAGS,
+                      ALLOWED_ATTR,
+                    }),
+                  }}
+                />
                 {project.features && project.features.length > 0 && (
                   <ul className="list-disc list-inside mt-4 space-y-1 text-sm">
-                    {project.features.map((feature, i) => (
+                    {project.features.map((feature: string, i: number) => (
                       <li key={i}>{feature}</li>
                     ))}
                   </ul>
