@@ -1,10 +1,11 @@
 import * as Icons from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { staggerContainer, staggerItem, fadeInUp } from "@/utils/animations";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "./ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 /**
  * Enterprise-safe preview renderer:
@@ -32,8 +33,21 @@ const toPlainText = (input?: string | null) => {
 };
 
 export const FutureProjects = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+
+  // Per-card expand state
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const toggleExpanded = (key: string) =>
+    setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  // Tracks whether a given card's description actually overflows the clamp
+  const [isOverflowing, setIsOverflowing] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  // Store DOM refs for each description node
+  const descRefs = useRef<Record<string, HTMLParagraphElement | null>>({});
 
   const { data: futureProjects = [], isLoading } = useQuery({
     queryKey: ["future-projects"],
@@ -41,10 +55,11 @@ export const FutureProjects = () => {
       const { data, error } = await supabase
         .from("future_projects")
         .select("*")
+        .eq("status", "active")
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 
@@ -54,9 +69,87 @@ export const FutureProjects = () => {
     return status === "In Development" ? "text-secondary" : "text-primary";
   };
 
+  // Build stable keys + sanitized descriptions once per fetch
+  const normalized = useMemo(() => {
+    return (futureProjects as any[]).map((p) => {
+      const key = String(p.id ?? p.title);
+      return {
+        ...p,
+        __key: key,
+        __cleanDescription: toPlainText(p.description),
+      };
+    });
+  }, [futureProjects]);
+
+  /**
+   * Measure overflow accurately:
+   * - Only for NON-expanded cards (because expanded is intentionally not clamped)
+   * - Uses scrollHeight/clientHeight with a small epsilon to avoid subpixel jitter
+   */
+  const measureOverflow = React.useCallback(() => {
+    const next: Record<string, boolean> = {};
+
+    for (const p of normalized) {
+      const key = p.__key as string;
+      const el = descRefs.current[key];
+
+      if (!el) continue;
+
+      // If expanded, we don't need the toggle decision based on clamp.
+      // But we still keep overflow result in case user collapses again.
+      const hasOverflow = el.scrollHeight > el.clientHeight + 2; // epsilon
+      next[key] = hasOverflow;
+    }
+
+    setIsOverflowing(next);
+  }, [normalized]);
+
+  // Measure after render and whenever layout changes
+  useEffect(() => {
+    // Wait one frame to ensure fonts/layout settle
+    const raf = window.requestAnimationFrame(() => {
+      measureOverflow();
+    });
+
+    return () => window.cancelAnimationFrame(raf);
+  }, [measureOverflow, expanded]);
+
+  // Re-measure on resize (responsive) and when fonts load (if supported)
+  useEffect(() => {
+    const onResize = () => measureOverflow();
+
+    window.addEventListener("resize", onResize);
+
+    // Optional: re-measure when fonts finish loading (prevents false negatives)
+    // Safe to call conditionally.
+    let fontPromiseCleanup: (() => void) | undefined;
+    const anyDoc = document as any;
+
+    if (anyDoc?.fonts?.ready?.then) {
+      let cancelled = false;
+      anyDoc.fonts.ready.then(() => {
+        if (!cancelled) measureOverflow();
+      });
+      fontPromiseCleanup = () => {
+        cancelled = true;
+      };
+    }
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      fontPromiseCleanup?.();
+    };
+  }, [measureOverflow]);
+
+  // Re-measure when images load inside cards (if any future change adds them)
+  // (No-op currently, but enterprise-safe.)
+  const handleCardLayoutStable = () => {
+    measureOverflow();
+  };
+
   if (isLoading) {
     return (
-      <section className="section-padding bg-[hsl(var(--section-bg))]" ref={ref}>
+      <section className="section-padding bg-[hsl(var(--section-bg))]" ref={(n) => (sectionRef.current = n as any)}>
         <div className="container-custom space-y-8">
           <Skeleton className="h-12 w-64 mx-auto" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -70,7 +163,10 @@ export const FutureProjects = () => {
   }
 
   return (
-    <section className="section-padding bg-[hsl(var(--section-bg))]" ref={ref}>
+    <section
+      className="section-padding bg-[hsl(var(--section-bg))]"
+      ref={(n) => (sectionRef.current = n as any)}
+    >
       <div className="container-custom">
         <motion.div
           className="text-center mb-16"
@@ -95,16 +191,21 @@ export const FutureProjects = () => {
           initial="initial"
           animate={isInView ? "animate" : "initial"}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          onAnimationComplete={handleCardLayoutStable}
         >
-          {futureProjects.map((project: any, index: number) => {
-            const IconComponent = iconMap[project.icon_name] || Icons.Lightbulb;
+          {normalized.map((project: any, index: number) => {
+            const key: string = project.__key;
+            const IconComponent =
+              iconMap[project.icon_name || "Lightbulb"] || Icons.Lightbulb;
 
-            // ✅ Clean, safe, readable preview (no <p> showing)
-            const cleanDescription = toPlainText(project.description);
+            const isExpanded = !!expanded[key];
+
+            // Toggle should appear ONLY if clamped content overflows
+            const showToggle = !!isOverflowing[key];
 
             return (
               <motion.div
-                key={project.title}
+                key={key}
                 variants={staggerItem}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ duration: 0.3 }}
@@ -128,7 +229,9 @@ export const FutureProjects = () => {
                       project.project_status
                     )}`}
                     initial={{ opacity: 0, x: 20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                    animate={
+                      isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
+                    }
                     transition={{ delay: 0.6 + index * 0.1 }}
                   >
                     {project.project_status}
@@ -137,9 +240,34 @@ export const FutureProjects = () => {
 
                 <h3 className="text-xl font-bold mb-3">{project.title}</h3>
 
-                <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-4">
-                  {cleanDescription}
+                {/* Description (clamped only when not expanded) */}
+                <p
+                  ref={(el) => {
+                    descRefs.current[key] = el;
+                  }}
+                  className={[
+                    "text-muted-foreground leading-relaxed",
+                    isExpanded ? "mb-3" : "mb-2 line-clamp-4",
+                  ].join(" ")}
+                >
+                  {project.__cleanDescription}
                 </p>
+
+                {showToggle && (
+                  <div className="mb-4">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="px-0 h-auto text-primary hover:underline"
+                      onClick={() => toggleExpanded(key)}
+                      aria-expanded={isExpanded}
+                      aria-controls={`future-project-desc-${key}`}
+                    >
+                      {isExpanded ? "Show less" : "Show more"}
+                    </Button>
+                  </div>
+                )}
 
                 <div>
                   <p className="text-sm font-semibold mb-2">Expected Features:</p>
@@ -147,11 +275,13 @@ export const FutureProjects = () => {
                     {(project.features || []).map(
                       (feature: string, featureIndex: number) => (
                         <motion.li
-                          key={`${feature}-${featureIndex}`}
+                          key={`${key}-feature-${featureIndex}`}
                           className="text-sm text-muted-foreground flex items-start gap-2"
                           initial={{ opacity: 0, x: -10 }}
                           animate={
-                            isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }
+                            isInView
+                              ? { opacity: 1, x: 0 }
+                              : { opacity: 0, x: -10 }
                           }
                           transition={{
                             delay: 0.7 + index * 0.1 + featureIndex * 0.05,
