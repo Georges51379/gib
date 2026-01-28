@@ -49,7 +49,6 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- Add each project detail page here (ideally use slugs) -->
   <url>
     <loc>https://gib-two.vercel.app/projects/ciel-website</loc>
     <lastmod>2026-01-12</lastmod>
