@@ -362,7 +362,7 @@ const ProjectsPage = () => {
         </div>
 
         {/* ✅ Future Projects section */}
-        {/*<FutureProjects />*/}
+        <FutureProjects />
       </main>
 
       <Footer />
