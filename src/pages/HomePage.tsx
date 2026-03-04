@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const HomePage = () => {
+
   const { data: heroData } = useQuery({
     queryKey: ['hero'],
     queryFn: async () => {
@@ -54,9 +55,14 @@ const HomePage = () => {
     },
   });
 
-  const siteUrl = 'https://gib-two.vercel.app';
-  const title = heroData?.name ? `${heroData.name} | Full-Stack Developer & Data Engineer in Lebanon` : "Georges Boutros | Full-Stack Developer & Data Engineer in Lebanon";
-  const description = heroData?.description || "Georges Boutros — Full Stack Developer & Data Engineer based in Lebanon. Building modern, data-driven, and scalable web applications with React, Node.js, Python, AWS, and PostgreSQL.";
+  const siteUrl = "https://gib-two.vercel.app";
+
+  const title =
+    "Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration";
+
+  const description =
+    heroData?.description ||
+    "Georges Boutros — Full Stack Developer & Data Engineer based in Lebanon. Building modern, data-driven, and scalable web applications with React, Node.js, Python, AWS, and PostgreSQL.";
 
   const schema = {
     "@context": "https://schema.org",
@@ -68,9 +74,25 @@ const HomePage = () => {
         "url": siteUrl,
         "image": `${siteUrl}/logo-GIB.png`,
         "description": description,
-        "nationality": { "@type": "Country", "name": "Lebanon" },
-        "address": { "@type": "PostalAddress", "addressCountry": "LB", "addressLocality": "Lebanon" },
-        "knowsAbout": ["React", "Node.js", "Python", "TypeScript", "AWS", "PostgreSQL", "Supabase", "Data Engineering"],
+        "nationality": {
+          "@type": "Country",
+          "name": "Lebanon"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "LB",
+          "addressLocality": "Lebanon"
+        },
+        "knowsAbout": [
+          "React",
+          "Node.js",
+          "Python",
+          "TypeScript",
+          "AWS",
+          "PostgreSQL",
+          "Supabase",
+          "Data Engineering"
+        ],
         "sameAs": [
           "https://github.com/Georges51379",
           "https://linkedin.com/in/georges-boutros-534960211"
@@ -92,19 +114,23 @@ const HomePage = () => {
   const faqItems = [
     {
       question: "Who is Georges Boutros?",
-      answer: "Georges Boutros is a Full Stack Developer and Data Engineer based in Lebanon. He specializes in building modern, scalable web applications using React, Node.js, Python, TypeScript, AWS, PostgreSQL, and Supabase."
+      answer:
+        "Georges Boutros is a Full Stack Developer and Data Engineer based in Lebanon. He specializes in building modern, scalable web applications using React, Node.js, Python, TypeScript, AWS, PostgreSQL, and Supabase."
     },
     {
       question: "What services does Georges Boutros offer?",
-      answer: "Georges Boutros offers full-stack web development, data engineering, cloud architecture (AWS), database design (PostgreSQL, Supabase), API development, and enterprise software solutions. He works with clients worldwide from Lebanon."
+      answer:
+        "Georges Boutros offers full-stack web development, data engineering, cloud architecture, database design, API development, and enterprise software solutions."
     },
     {
       question: "Where is Georges Boutros based?",
-      answer: "Georges Boutros is based in Lebanon and available for remote work worldwide. He provides web development and data engineering services to clients across the Middle East and globally."
+      answer:
+        "Georges Boutros is based in Lebanon and available for remote work worldwide."
     },
     {
       question: "How can I hire Georges Boutros?",
-      answer: "You can hire Georges Boutros by visiting the contact page at dev-handover-tool.lovable.app/contact or by emailing boutros.georges513@gmail.com. He is available for freelance projects, contract work, and long-term engagements."
+      answer:
+        "You can hire Georges Boutros by visiting the contact page or emailing boutros.georges513@gmail.com."
     }
   ];
 
@@ -115,21 +141,26 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO 
+
+      <SEO
         title={title}
         description={description}
         canonical={siteUrl}
         image="/logo-GIB.png"
         type="website"
         schema={schema}
-        keywords="Georges Boutros, Full Stack Developer, Data Engineer, Lebanon, Beirut, Lebanese developer, software developer Lebanon, React developer Lebanon, Node.js, Python, TypeScript, AWS, PostgreSQL, Supabase, Web Development, hire developer Lebanon, freelance developer Lebanon"
+        keywords="Georges Boutros, Full Stack Developer, Data Engineer, Lebanon, Beirut, React developer Lebanon, Node.js, Python, TypeScript, AWS, PostgreSQL, Supabase"
         faqItems={faqItems}
       />
+
       <Navbar />
+
       <main>
+
         <Hero />
 
-        {/* Featured Projects Preview */}
+        {/* Featured Projects */}
+
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -138,11 +169,13 @@ const HomePage = () => {
           className="section-padding bg-muted/30"
         >
           <div className="container-custom">
+
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <Briefcase className="w-6 h-6 text-primary" />
                 <h2 className="text-3xl font-bold">Featured Projects</h2>
               </div>
+
               <Button asChild variant="outline">
                 <Link to="/projects" className="flex items-center gap-2">
                   View All Projects
@@ -150,41 +183,59 @@ const HomePage = () => {
                 </Link>
               </Button>
             </div>
+
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
               {featuredProjects?.map((project) => (
                 <Card key={project.id} className="group overflow-hidden hover:shadow-lg transition-all duration-300">
+
                   <div className="aspect-video overflow-hidden">
-                    <img 
-                      src={project.thumbnail_url} 
+                    <img
+                      src={project.thumbnail_url}
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
+
                   <CardHeader>
                     <div className="flex items-center gap-2 mb-2">
                       <Star className="w-4 h-4 text-primary fill-primary" />
                       <span className="text-xs text-muted-foreground">Featured</span>
                     </div>
+
                     <CardTitle className="text-lg">{project.title}</CardTitle>
                   </CardHeader>
+
                   <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{project.short_description}</p>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {project.short_description}
+                    </p>
+
                     <div className="flex flex-wrap gap-1 mb-4">
                       {project.category_tags?.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
                       ))}
                     </div>
+
                     <Button asChild size="sm" className="w-full">
-                      <Link to={`/projects/${project.slug || project.id}`}>View Case Study</Link>
+                      <Link to={`/projects/${project.slug || project.id}`}>
+                        View Case Study
+                      </Link>
                     </Button>
                   </CardContent>
+
                 </Card>
               ))}
+
             </div>
+
           </div>
         </motion.section>
 
-        {/* About Preview */}
+        {/* About Section */}
+
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -193,11 +244,13 @@ const HomePage = () => {
           className="section-padding"
         >
           <div className="container-custom">
+
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <User className="w-6 h-6 text-primary" />
                 <h2 className="text-3xl font-bold">About Me</h2>
               </div>
+
               <Button asChild variant="outline">
                 <Link to="/about" className="flex items-center gap-2">
                   Learn More
@@ -205,17 +258,20 @@ const HomePage = () => {
                 </Link>
               </Button>
             </div>
+
             <Card className="p-6">
               <p className="text-lg text-muted-foreground leading-relaxed">
-                I'm a Full-Stack Developer and Data Engineer based in Lebanon with a passion for building secure, 
-                scalable web applications. With expertise in React, Node.js, Python, and cloud technologies, 
+                I'm a Full-Stack Developer and Data Engineer based in Lebanon with a passion for building secure,
+                scalable web applications. With expertise in React, Node.js, Python, and cloud technologies,
                 I help businesses transform their ideas into production-ready solutions.
               </p>
             </Card>
+
           </div>
         </motion.section>
 
-        {/* Services Preview */}
+        {/* Services Section */}
+
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -224,11 +280,13 @@ const HomePage = () => {
           className="section-padding bg-muted/30"
         >
           <div className="container-custom">
+
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <DollarSign className="w-6 h-6 text-primary" />
                 <h2 className="text-3xl font-bold">Services & Pricing</h2>
               </div>
+
               <Button asChild variant="outline">
                 <Link to="/services" className="flex items-center gap-2">
                   View All Plans
@@ -236,23 +294,39 @@ const HomePage = () => {
                 </Link>
               </Button>
             </div>
+
             <div className="grid md:grid-cols-3 gap-6">
+
               {pricingPlans?.map((plan) => (
                 <Card key={plan.id} className={`${plan.highlighted ? 'border-primary ring-2 ring-primary/20' : ''}`}>
+
                   <CardHeader>
                     <CardTitle>{plan.name}</CardTitle>
-                    <div className="text-3xl font-bold text-primary">{plan.price}<span className="text-sm text-muted-foreground">/{plan.period}</span></div>
+
+                    <div className="text-3xl font-bold text-primary">
+                      {plan.price}
+                      <span className="text-sm text-muted-foreground">
+                        /{plan.period}
+                      </span>
+                    </div>
                   </CardHeader>
+
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">{plan.description}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {plan.description}
+                    </p>
                   </CardContent>
+
                 </Card>
               ))}
+
             </div>
+
           </div>
         </motion.section>
 
-        {/* Dev Tools Preview */}
+        {/* Dev Tools */}
+
         <motion.section
           initial="hidden"
           whileInView="visible"
@@ -261,11 +335,13 @@ const HomePage = () => {
           className="section-padding"
         >
           <div className="container-custom">
+
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <Wrench className="w-6 h-6 text-primary" />
                 <h2 className="text-3xl font-bold">Developer Tools</h2>
               </div>
+
               <Button asChild variant="outline">
                 <Link to="/dev-tools" className="flex items-center gap-2">
                   Explore Tools
@@ -273,20 +349,30 @@ const HomePage = () => {
                 </Link>
               </Button>
             </div>
+
             <Card className="p-6">
+
               <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-                Free, client-side developer utilities including JSON formatter, Base64 encoder/decoder, 
-                UUID generator, regex tester, and more. All tools run locally in your browser — no data sent to servers.
+                Free client-side developer utilities including JSON formatter, Base64 encoder/decoder,
+                UUID generator, regex tester and more.
               </p>
+
               <Button asChild>
-                <Link to="/dev-tools">Try Dev Tools</Link>
+                <Link to="/dev-tools">
+                  Try Dev Tools
+                </Link>
               </Button>
+
             </Card>
+
           </div>
         </motion.section>
+
       </main>
+
       <Footer />
       <BackToTop />
+
     </div>
   );
 };

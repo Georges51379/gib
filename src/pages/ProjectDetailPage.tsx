@@ -100,7 +100,7 @@ const ProjectDetailPage = () => {
   const nextProject = currentIndex < (allProjects?.length ?? 0) - 1 ? allProjects?.[currentIndex + 1] : null;
 
   const siteUrl = 'https://gib-two.vercel.app';
-  const title = project ? `${project.title} | Case Study - Georges Boutros` : "Project | Georges Boutros";
+  const title = project ? `${project.title} | Case Study - Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration` : "Project | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration";
   const description = project?.short_description || "View the full case study for this project.";
 
   const schema = project ? {
