@@ -6,8 +6,9 @@ const corsHeaders = {
   'Content-Type': 'application/xml',
 };
 
+const SITE_URL = 'https://gib-two.vercel.app';
+
 Deno.serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -17,12 +18,15 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log('Fetching active projects for sitemap...');
+    // Allow overriding siteUrl via query param
+    const url = new URL(req.url);
+    const siteUrl = (url.searchParams.get('siteUrl') || SITE_URL).replace(/\/$/, '');
+    const today = new Date().toISOString().split('T')[0];
 
-    // Fetch active projects
+    // Fetch active projects with slugs
     const { data: projects, error } = await supabase
       .from('projects')
-      .select('id, updated_at, title, thumbnail_url')
+      .select('id, slug, updated_at, title, thumbnail_url')
       .eq('status', 'active')
       .order('display_order', { ascending: true });
 
@@ -31,79 +35,31 @@ Deno.serve(async (req) => {
       throw error;
     }
 
-    console.log(`Found ${projects?.length || 0} active projects`);
-
-    // Get site URL from request origin or use default
-    const siteUrl = new URL(req.url).origin.replace(/\/$/, '');
-    const today = new Date().toISOString().split('T')[0];
-
-    // Define image type
     interface ImageInfo {
       loc: string;
       title: string;
       caption: string;
     }
 
-    // Build sitemap URLs
-    const urls: Array<{
+    interface SitemapUrl {
       loc: string;
       lastmod: string;
       changefreq: string;
       priority: number;
       images: ImageInfo[];
-    }> = [
-      {
-        loc: siteUrl,
-        lastmod: today,
-        changefreq: 'weekly',
-        priority: 1.0,
-        images: []
-      },
-      {
-        loc: `${siteUrl}/#about`,
-        lastmod: today,
-        changefreq: 'weekly',
-        priority: 0.8,
-        images: []
-      },
-      {
-        loc: `${siteUrl}/#education`,
-        lastmod: today,
-        changefreq: 'monthly',
-        priority: 0.7,
-        images: []
-      },
-      {
-        loc: `${siteUrl}/#projects`,
-        lastmod: today,
-        changefreq: 'weekly',
-        priority: 0.9,
-        images: []
-      },
-      {
-        loc: `${siteUrl}/#pricing`,
-        lastmod: today,
-        changefreq: 'monthly',
-        priority: 0.7,
-        images: []
-      },
-      {
-        loc: `${siteUrl}/#testimonials`,
-        lastmod: today,
-        changefreq: 'monthly',
-        priority: 0.7,
-        images: []
-      },
-      {
-        loc: `${siteUrl}/#contact`,
-        lastmod: today,
-        changefreq: 'monthly',
-        priority: 0.7,
-        images: []
-      }
+    }
+
+    // Static pages with real routes
+    const urls: SitemapUrl[] = [
+      { loc: siteUrl, lastmod: today, changefreq: 'weekly', priority: 1.0, images: [] },
+      { loc: `${siteUrl}/about`, lastmod: today, changefreq: 'weekly', priority: 0.8, images: [] },
+      { loc: `${siteUrl}/projects`, lastmod: today, changefreq: 'weekly', priority: 0.9, images: [] },
+      { loc: `${siteUrl}/services`, lastmod: today, changefreq: 'monthly', priority: 0.8, images: [] },
+      { loc: `${siteUrl}/contact`, lastmod: today, changefreq: 'monthly', priority: 0.7, images: [] },
+      { loc: `${siteUrl}/dev-tools`, lastmod: today, changefreq: 'monthly', priority: 0.7, images: [] },
     ];
 
-    // Add project detail pages with image sitemap
+    // Add project detail pages using slug
     if (projects && projects.length > 0) {
       projects.forEach(project => {
         const images: ImageInfo[] = [];
@@ -115,8 +71,9 @@ Deno.serve(async (req) => {
           });
         }
 
+        const projectPath = project.slug || project.id;
         urls.push({
-          loc: `${siteUrl}/project/${project.id}`,
+          loc: `${siteUrl}/projects/${projectPath}`,
           lastmod: project.updated_at 
             ? new Date(project.updated_at).toISOString().split('T')[0] 
             : today,
@@ -127,16 +84,15 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Generate XML sitemap with image sitemap support
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${urls.map(url => `  <url>
-    <loc>${url.loc}</loc>
-    <lastmod>${url.lastmod}</lastmod>
-    <changefreq>${url.changefreq}</changefreq>
-    <priority>${url.priority}</priority>${url.images.length > 0 ? `
-${url.images.map(img => `    <image:image>
+${urls.map(u => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${u.lastmod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>${u.images.length > 0 ? `
+${u.images.map(img => `    <image:image>
       <image:loc>${img.loc}</image:loc>
       <image:title>${img.title}</image:title>
       <image:caption>${img.caption}</image:caption>
@@ -144,22 +100,14 @@ ${url.images.map(img => `    <image:image>
   </url>`).join('\n')}
 </urlset>`;
 
-    console.log('Sitemap generated successfully');
-
-    return new Response(sitemap, {
-      headers: corsHeaders,
-      status: 200,
-    });
+    return new Response(sitemap, { headers: corsHeaders, status: 200 });
 
   } catch (error) {
     console.error('Error generating sitemap:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
 });

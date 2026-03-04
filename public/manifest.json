@@ -1,0 +1,16 @@
+{
+  "name": "Georges Boutros - Full Stack Developer & Data Engineer",
+  "short_name": "Georges Boutros",
+  "description": "Portfolio of Georges Boutros, Full Stack Developer & Data Engineer building modern, data-driven web applications.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#FFD700",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

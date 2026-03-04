@@ -10,7 +10,8 @@ export const Footer = () => {
   const socialLinks = [
     { icon: Mail, href: "mailto:boutros.georges513@gmail.com", label: "Email" },
     { icon: Linkedin, href: "https://linkedin.com/in/georges-boutros-534960211", label: "LinkedIn" },
-    { icon: Github, href: "https://github.com/Georges51379", label: "GitHub" }
+    { icon: Github, href: "https://github.com/Georges51379", label: "GitHub" },
+    { icon: Twitter, href: "https://twitter.com", label: "Twitter" }
   ];
 
   return (

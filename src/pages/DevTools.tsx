@@ -16,12 +16,43 @@ const DevTools = () => {
     ? devTools 
     : devTools.filter(tool => tool.category === activeCategory);
 
+  const siteUrl = 'https://gib-two.vercel.app';
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Developer Tools by Georges Boutros",
+    "description": "Free developer tools including password generator, JWT decoder, Base64 encoder, JSON formatter, and more. All tools run 100% client-side for privacy.",
+    "url": `${siteUrl}/dev-tools`,
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Georges Boutros",
+      "url": siteUrl
+    },
+    "featureList": devTools.map(t => t.name).join(", ")
+  };
+
+  const breadcrumbs = [
+    { name: "Home", url: siteUrl },
+    { name: "Developer Tools", url: `${siteUrl}/dev-tools` }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <SEO 
-        title="Dev Tools | Georges Boutros"
-        description="Free developer tools including password generator, JWT decoder, Base64 encoder, JSON formatter, and more. All tools run 100% client-side for privacy."
-        canonical={`${window.location.origin}/dev-tools`}
+        title="Free Developer Tools | JSON Formatter, Base64, UUID Generator"
+        description="Free, privacy-focused developer utilities: JSON formatter, Base64 encoder, UUID generator, JWT decoder, regex tester, password generator, and more. 100% client-side."
+        canonical={`${siteUrl}/dev-tools`}
+        keywords="developer tools, JSON formatter, Base64 encoder, UUID generator, JWT decoder, regex tester, password generator, hash generator, free online tools, Georges Boutros"
+        schema={schema}
+        breadcrumbs={breadcrumbs}
       />
       <Navbar />
       
