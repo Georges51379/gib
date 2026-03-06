@@ -70,7 +70,7 @@ const HomePage = () => {
   });
 
   const siteUrl = 'https://gib-two.vercel.app';
-  const title = heroData?.name ? `${heroData.name} | Full-Stack Developer & Data Engineer in Lebanon` : "Georges Boutros | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration";
+  const title = "Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration";
   const description = heroData?.description || "Georges Boutros — Full Stack Developer & Data Engineer based in Lebanon. Building modern, data-driven, and scalable web applications with React, Node.js, Python, AWS, and PostgreSQL.";
 
   const schema = {
