@@ -80,6 +80,57 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          author: string | null
+          content: string
+          cover_image_url: string
+          created_at: string | null
+          display_order: number
+          excerpt: string
+          featured: boolean | null
+          id: string
+          reading_time_minutes: number | null
+          slug: string | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author?: string | null
+          content: string
+          cover_image_url: string
+          created_at?: string | null
+          display_order?: number
+          excerpt: string
+          featured?: boolean | null
+          id?: string
+          reading_time_minutes?: number | null
+          slug?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string | null
+          content?: string
+          cover_image_url?: string
+          created_at?: string | null
+          display_order?: number
+          excerpt?: string
+          featured?: boolean | null
+          id?: string
+          reading_time_minutes?: number | null
+          slug?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string | null

@@ -54,6 +54,7 @@ Deno.serve(async (req) => {
       { loc: siteUrl, lastmod: today, changefreq: 'weekly', priority: 1.0, images: [] },
       { loc: `${siteUrl}/about`, lastmod: today, changefreq: 'weekly', priority: 0.8, images: [] },
       { loc: `${siteUrl}/projects`, lastmod: today, changefreq: 'weekly', priority: 0.9, images: [] },
+      { loc: `${siteUrl}/blog`, lastmod: today, changefreq: 'weekly', priority: 0.9, images: [] },
       { loc: `${siteUrl}/services`, lastmod: today, changefreq: 'monthly', priority: 0.8, images: [] },
       { loc: `${siteUrl}/contact`, lastmod: today, changefreq: 'monthly', priority: 0.7, images: [] },
       { loc: `${siteUrl}/dev-tools`, lastmod: today, changefreq: 'monthly', priority: 0.7, images: [] },
@@ -79,6 +80,40 @@ Deno.serve(async (req) => {
             : today,
           changefreq: 'monthly',
           priority: 0.85,
+          images
+        });
+      });
+    }
+
+    // Fetch active blog posts with slugs
+    const { data: blogPosts, error: blogError } = await supabase
+      .from('blog_posts')
+      .select('id, slug, updated_at, title, cover_image_url')
+      .eq('status', 'active')
+      .order('display_order', { ascending: true });
+
+    if (blogError) {
+      console.error('Error fetching blog posts:', blogError);
+    }
+
+    if (blogPosts && blogPosts.length > 0) {
+      blogPosts.forEach(post => {
+        const images: ImageInfo[] = [];
+        if (post.cover_image_url) {
+          images.push({
+            loc: post.cover_image_url,
+            title: post.title,
+            caption: `${post.title} blog post cover`
+          });
+        }
+        const postPath = post.slug || post.id;
+        urls.push({
+          loc: `${siteUrl}/blog/${postPath}`,
+          lastmod: post.updated_at
+            ? new Date(post.updated_at).toISOString().split('T')[0]
+            : today,
+          changefreq: 'weekly',
+          priority: 0.8,
           images
         });
       });

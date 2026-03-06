@@ -19,6 +19,7 @@ import {
   BarChart3,
   Code2,
   Clock,
+  BookOpen,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
@@ -46,6 +47,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { to: '/admin/about', icon: User, label: 'About Section' },
     { to: '/admin/education', icon: GraduationCap, label: 'Education' },
     { to: '/admin/projects', icon: Folder, label: 'Projects' },
+    { to: '/admin/blog', icon: BookOpen, label: 'Blog' },
     { to: '/admin/pricing', icon: DollarSign, label: 'Pricing Plans' },
     { to: '/admin/future', icon: Lightbulb, label: 'Future Projects' },
     { to: '/admin/tech-stack', icon: Code2, label: 'Tech Stack' },

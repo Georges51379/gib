@@ -6,9 +6,11 @@ import { Footer } from "@/components/Footer";
 import { BackToTop } from "@/components/BackToTop";
 import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Accordion,
   AccordionContent,
@@ -28,12 +30,19 @@ import {
   Shield,
   Layers,
   CheckCircle,
-  TrendingUp
+  TrendingUp,
+  ZoomIn,
+  ChevronLeft,
+  ChevronRight,
+  X as XIcon,
+  ImageIcon
 } from "lucide-react";
 
 const ProjectDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // Fetch project by slug or id
   const { data: project, isLoading, error } = useQuery({
@@ -100,7 +109,7 @@ const ProjectDetailPage = () => {
   const nextProject = currentIndex < (allProjects?.length ?? 0) - 1 ? allProjects?.[currentIndex + 1] : null;
 
   const siteUrl = 'https://gib-two.vercel.app';
-  const title = project ? `${project.title} | Case Study - Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration` : "Project | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration";
+  const title = project ? `${project.title} | Case Study - Georges Boutros` : "Project | Georges Boutros";
   const description = project?.short_description || "View the full case study for this project.";
 
   const schema = project ? {
@@ -396,7 +405,7 @@ const ProjectDetailPage = () => {
             </motion.div>
           )}
 
-          {/* Gallery */}
+          {/* Screenshots Gallery */}
           {images && images.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -404,22 +413,82 @@ const ProjectDetailPage = () => {
               transition={{ delay: 0.4 }}
               className="mb-12"
             >
-              <h2 className="text-2xl font-bold mb-6">Gallery</h2>
-              <div className="grid md:grid-cols-2 gap-4">
-                {images.map((image) => (
-                  <div key={image.id} className="rounded-lg overflow-hidden shadow-lg">
-                    <img 
-                      src={image.image_url} 
-                      alt={image.caption || project.title}
-                      className="w-full h-auto"
-                      loading="lazy"
-                    />
+              <div className="flex items-center gap-3 mb-6">
+                <ImageIcon className="w-6 h-6 text-primary" />
+                <h2 className="text-2xl font-bold">Screenshots</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {images.map((image, index) => (
+                  <motion.div
+                    key={image.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                    className="group relative rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+                    onClick={() => { setLightboxIndex(index); setLightboxOpen(true); }}
+                  >
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={image.image_url}
+                        alt={image.caption || project.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                      <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
                     {image.caption && (
-                      <p className="text-sm text-muted-foreground p-3 bg-muted/50">{image.caption}</p>
+                      <div className="p-3 bg-card">
+                        <p className="text-sm text-muted-foreground">{image.caption}</p>
+                      </div>
                     )}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
+
+              {/* Lightbox Modal */}
+              <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+                <DialogContent className="max-w-5xl w-[95vw] p-0 bg-black/95 border-none">
+                  <div className="relative flex items-center justify-center min-h-[60vh]">
+                    <button
+                      onClick={() => setLightboxOpen(false)}
+                      className="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-colors"
+                    >
+                      <XIcon className="w-6 h-6" />
+                    </button>
+
+                    {images.length > 1 && (
+                      <>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => (prev - 1 + images.length) % images.length); }}
+                          className="absolute left-4 z-10 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors"
+                        >
+                          <ChevronLeft className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => (prev + 1) % images.length); }}
+                          className="absolute right-4 z-10 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors"
+                        >
+                          <ChevronRight className="w-6 h-6" />
+                        </button>
+                      </>
+                    )}
+
+                    <img
+                      src={images[lightboxIndex]?.image_url}
+                      alt={images[lightboxIndex]?.caption || project.title}
+                      className="max-w-full max-h-[80vh] object-contain rounded-lg"
+                    />
+                  </div>
+                  {images[lightboxIndex]?.caption && (
+                    <p className="text-center text-white/80 text-sm pb-4">{images[lightboxIndex].caption}</p>
+                  )}
+                  <p className="text-center text-white/50 text-xs pb-4">
+                    {lightboxIndex + 1} / {images.length}
+                  </p>
+                </DialogContent>
+              </Dialog>
             </motion.div>
           )}
 

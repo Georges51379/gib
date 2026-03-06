@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Menu, X, Moon, Sun, Home, User, Briefcase, DollarSign, Mail, Github, Linkedin, Twitter, Wrench } from "lucide-react";
+import { Menu, X, Moon, Sun, Home, User, Briefcase, DollarSign, Mail, Github, Linkedin, Twitter, Wrench, BookOpen } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -16,6 +16,7 @@ const navLinks: NavLink[] = [
   { name: "Home", href: "/", icon: Home },
   { name: "About", href: "/about", icon: User },
   { name: "Projects", href: "/projects", icon: Briefcase },
+  { name: "Blog", href: "/blog", icon: BookOpen },
   { name: "Services", href: "/services", icon: DollarSign },
   { name: "Contact", href: "/contact", icon: Mail },
   { name: "Dev Tools", href: "/dev-tools", icon: Wrench },

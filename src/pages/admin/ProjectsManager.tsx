@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, Pencil, XCircle, CheckCircle } from 'lucide-react';
+import { Plus, Pencil, XCircle, CheckCircle, Trash2, ImageIcon } from 'lucide-react';
 
 export default function ProjectsManager() {
   const queryClient = useQueryClient();
@@ -43,6 +43,10 @@ export default function ProjectsManager() {
   const [resultsImpact, setResultsImpact] = useState('');
   const [categoryTags, setCategoryTags] = useState('');
   const [slug, setSlug] = useState('');
+
+  // Project images state
+  const [projectImages, setProjectImages] = useState<any[]>([]);
+  const [newCaption, setNewCaption] = useState('');
 
   const { data: projects } = useQuery({
     queryKey: ['projects-list'],
@@ -82,7 +86,7 @@ export default function ProjectsManager() {
     setSlug('');
   };
 
-  const handleEdit = (project: any) => {
+  const handleEdit = async (project: any) => {
     setEditingId(project.id);
     setTitle(project.title);
     setShortDescription(project.short_description);
@@ -97,7 +101,6 @@ export default function ProjectsManager() {
     setGithubUrl(project.github_url || '');
     setFeatured(project.featured);
     setCategory(project.category || 'Web');
-    // New fields
     setProblemStatement(project.problem_statement || '');
     setSolutionDescription(project.solution_description || '');
     setArchitectureSummary(project.architecture_summary || '');
@@ -106,6 +109,13 @@ export default function ProjectsManager() {
     setResultsImpact(project.results_impact || '');
     setCategoryTags(project.category_tags?.join(', ') || '');
     setSlug(project.slug || '');
+    // Load project images
+    const { data: imgs } = await supabase
+      .from('project_images')
+      .select('*')
+      .eq('project_id', project.id)
+      .order('display_order', { ascending: true });
+    setProjectImages(imgs || []);
     setIsOpen(true);
   };
 
@@ -358,6 +368,71 @@ export default function ProjectsManager() {
                   <Switch checked={featured} onCheckedChange={setFeatured} />
                   <Label>Featured Project</Label>
                 </div>
+                {/* Project Screenshots Section */}
+                {editingId && (
+                  <div className="border-t pt-4 mt-4">
+                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                      <ImageIcon className="w-5 h-5" />
+                      Project Screenshots
+                    </h3>
+
+                    {/* Existing images */}
+                    {projectImages.length > 0 && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                        {projectImages.map((img) => (
+                          <div key={img.id} className="relative group rounded-lg overflow-hidden border border-border">
+                            <img src={img.image_url} alt={img.caption || 'Screenshot'} className="w-full h-32 object-cover" />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <Button
+                                variant="destructive"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={async () => {
+                                  const { error } = await supabase.from('project_images').delete().eq('id', img.id);
+                                  if (error) { toast.error('Failed to delete'); return; }
+                                  setProjectImages(prev => prev.filter(i => i.id !== img.id));
+                                  toast.success('Image removed');
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            {img.caption && (
+                              <p className="text-xs text-muted-foreground p-1 truncate">{img.caption}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Upload new screenshot */}
+                    <div className="space-y-2">
+                      <Input
+                        value={newCaption}
+                        onChange={(e) => setNewCaption(e.target.value)}
+                        placeholder="Caption (optional)"
+                      />
+                      <ImageUploader
+                        bucket="project-images"
+                        onUploadComplete={async (url) => {
+                          if (!url || !editingId) return;
+                          const nextOrder = projectImages.length + 1;
+                          const { data, error } = await supabase.from('project_images').insert({
+                            project_id: editingId,
+                            image_url: url,
+                            caption: newCaption || null,
+                            display_order: nextOrder,
+                          }).select().single();
+                          if (error) { toast.error('Failed to save image'); return; }
+                          setProjectImages(prev => [...prev, data]);
+                          setNewCaption('');
+                          toast.success('Screenshot added');
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !thumbnailUrl}>
                   {saveMutation.isPending ? 'Saving...' : 'Save'}
                 </Button>

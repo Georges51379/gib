@@ -38,6 +38,11 @@ import TestimonialsManager from "./pages/admin/TestimonialsManager";
 import Analytics from "./pages/admin/Analytics";
 import TechStackManager from "./pages/admin/TechStackManager";
 import SkillsTimelineManager from "./pages/admin/SkillsTimelineManager";
+import BlogManager from "./pages/admin/BlogManager";
+
+// Blog Pages
+import BlogPage from "./pages/BlogPage";
+import BlogDetailPage from "./pages/BlogDetailPage";
 
 import { SEO } from "./components/SEO";
 import { usePageViewTracker } from "./hooks/usePageViewTracker";
@@ -96,6 +101,8 @@ const AppContent = () => {
           <Route path="/projects/:slug" element={<ProjectDetailPage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogDetailPage />} />
           <Route path="/dev-tools" element={<DevTools />} />
           <Route path="/maintenance" element={<Maintenance />} />
           
@@ -117,6 +124,7 @@ const AppContent = () => {
           <Route path="/admin/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
           <Route path="/admin/tech-stack" element={<ProtectedRoute><TechStackManager /></ProtectedRoute>} />
           <Route path="/admin/timeline" element={<ProtectedRoute><SkillsTimelineManager /></ProtectedRoute>} />
+          <Route path="/admin/blog" element={<ProtectedRoute><BlogManager /></ProtectedRoute>} />
           
           {/* Catch-all 404 */}
           <Route path="*" element={<NotFound />} />
