@@ -50,12 +50,12 @@ export default function Login() {
             return;
           }
         } catch (recaptchaError) {
-          console.error('reCAPTCHA verification error:', recaptchaError);
+          if (import.meta.env.DEV) console.error('reCAPTCHA verification error:', recaptchaError);
           setServerError('Bot verification failed. Please try again.');
           return;
         }
       } else {
-        console.warn('reCAPTCHA not available, proceeding without verification');
+        if (import.meta.env.DEV) console.warn('reCAPTCHA not available, proceeding without verification');
       }
 
       // Proceed with login

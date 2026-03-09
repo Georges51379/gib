@@ -1,17 +1,46 @@
+import { useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { Footer } from "@/components/Footer";
 import { BackToTop } from "@/components/BackToTop";
 import { SEO } from "@/components/SEO";
+import { AnimatedCounterSection } from "@/components/AnimatedCounter";
+import { TestimonialsMarquee } from "@/components/TestimonialsMarquee";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Briefcase, User, DollarSign, Wrench, Star, BookOpen, Clock } from "lucide-react";
+import { ArrowRight, Briefcase, User, DollarSign, Wrench, Star, BookOpen, Clock, LifeBuoy } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const faqItems = [
+  {
+    question: "Who is Georges Boutros?",
+    answer: "Georges Boutros is a Full Stack Developer and Data Engineer based in Lebanon. He specializes in building modern, scalable web applications using React, Node.js, Python, TypeScript, AWS, PostgreSQL, and Supabase."
+  },
+  {
+    question: "What services does Georges Boutros offer?",
+    answer: "Georges Boutros offers full-stack web development, data engineering, cloud architecture (AWS), database design (PostgreSQL, Supabase), API development, and enterprise software solutions. He works with clients worldwide from Lebanon."
+  },
+  {
+    question: "Where is Georges Boutros based?",
+    answer: "Georges Boutros is based in Lebanon and available for remote work worldwide. He provides web development and data engineering services to clients across the Middle East and globally."
+  },
+  {
+    question: "How can I hire Georges Boutros?",
+    answer: "You can hire Georges Boutros by visiting the contact page at dev-handover-tool.lovable.app/contact or by emailing boutros.georges513@gmail.com. He is available for freelance projects, contract work, and long-term engagements."
+  }
+];
+
+const siteUrl = 'https://gib-two.vercel.app';
 
 const HomePage = () => {
   const { data: heroData } = useQuery({
@@ -24,6 +53,7 @@ const HomePage = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: featuredProjects } = useQuery({
@@ -39,6 +69,7 @@ const HomePage = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: latestPosts } = useQuery({
@@ -46,13 +77,14 @@ const HomePage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('id, slug, title, excerpt, cover_image_url, created_at, reading_time_minutes, tags')
+        .select('id, slug, title, excerpt, cover_image_url, created_at, reading_time_minutes, tags, author')
         .eq('status', 'active')
         .order('created_at', { ascending: false })
         .limit(3);
       if (error) throw error;
       return data;
     },
+    staleTime: 2 * 60 * 1000,
   });
 
   const { data: pricingPlans } = useQuery({
@@ -67,13 +99,13 @@ const HomePage = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
   });
 
-  const siteUrl = 'https://gib-two.vercel.app';
-  const title = "Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration";
+  const title = heroData?.name ? `${heroData.name} | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration` : "Georges Boutros | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration";
   const description = heroData?.description || "Georges Boutros — Full Stack Developer & Data Engineer based in Lebanon. Building modern, data-driven, and scalable web applications with React, Node.js, Python, AWS, and PostgreSQL.";
 
-  const schema = {
+  const schema = useMemo(() => ({
     "@context": "https://schema.org",
     "@graph": [
       {
@@ -102,31 +134,7 @@ const HomePage = () => {
         }
       }
     ]
-  };
-
-  const faqItems = [
-    {
-      question: "Who is Georges Boutros?",
-      answer: "Georges Boutros is a Full Stack Developer and Data Engineer based in Lebanon. He specializes in building modern, scalable web applications using React, Node.js, Python, TypeScript, AWS, PostgreSQL, and Supabase."
-    },
-    {
-      question: "What services does Georges Boutros offer?",
-      answer: "Georges Boutros offers full-stack web development, data engineering, cloud architecture (AWS), database design (PostgreSQL, Supabase), API development, and enterprise software solutions. He works with clients worldwide from Lebanon."
-    },
-    {
-      question: "Where is Georges Boutros based?",
-      answer: "Georges Boutros is based in Lebanon and available for remote work worldwide. He provides web development and data engineering services to clients across the Middle East and globally."
-    },
-    {
-      question: "How can I hire Georges Boutros?",
-      answer: "You can hire Georges Boutros by visiting the contact page at dev-handover-tool.lovable.app/contact or by emailing boutros.georges513@gmail.com. He is available for freelance projects, contract work, and long-term engagements."
-    }
-  ];
-
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-  };
+  }), [heroData?.name, heroData?.subtitle, description]);
 
   return (
     <div className="min-h-screen">
@@ -139,10 +147,21 @@ const HomePage = () => {
         schema={schema}
         keywords="Georges Boutros, Full Stack Developer, Data Engineer, Lebanon, Beirut, Lebanese developer, software developer Lebanon, React developer Lebanon, Node.js, Python, TypeScript, AWS, PostgreSQL, Supabase, Web Development, hire developer Lebanon, freelance developer Lebanon"
         faqItems={faqItems}
+        breadcrumbs={[{ name: "Home", url: siteUrl }]}
       />
       <Navbar />
-      <main>
+      <main id="main-content">
         <Hero />
+
+        {/* Animated Stats */}
+        <AnimatedCounterSection
+          stats={[
+            { end: 15, suffix: "+", label: "Projects Delivered" },
+            { end: 50000, suffix: "+", label: "Lines of Code" },
+            { end: 4, suffix: "+", label: "Years Experience" },
+            { end: 10, suffix: "+", label: "Happy Clients" },
+          ]}
+        />
 
         {/* Featured Projects Preview */}
         <motion.section
@@ -301,7 +320,13 @@ const HomePage = () => {
                       />
                     </div>
                     <CardHeader className="pb-2">
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2 flex-wrap">
+                        {post.author && (
+                          <span className="flex items-center gap-1">
+                            <User className="w-3 h-3" />
+                            {post.author}
+                          </span>
+                        )}
                         <span>{format(new Date(post.created_at!), 'MMM dd, yyyy')}</span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -322,6 +347,38 @@ const HomePage = () => {
             </div>
           </motion.section>
         )}
+
+        {/* Quick Rescue */}
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={sectionVariants}
+          className="section-padding bg-destructive/5"
+        >
+          <div className="container-custom">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <LifeBuoy className="w-6 h-6 text-destructive" />
+                <h2 className="text-3xl font-bold">Quick Rescue</h2>
+              </div>
+              <Button asChild variant="outline">
+                <Link to="/rescue" className="flex items-center gap-2">
+                  Get Help Now
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            </div>
+            <Card className="p-6">
+              <p className="text-lg text-muted-foreground leading-relaxed mb-4">
+                Facing a technical challenge? Submit your problem and I'll review it and get back to you with a solution plan. Fast response for urgent issues.
+              </p>
+              <Button asChild variant="destructive">
+                <Link to="/rescue">Submit a Rescue Request</Link>
+              </Button>
+            </Card>
+          </div>
+        </motion.section>
 
         {/* Dev Tools Preview */}
         <motion.section
@@ -355,6 +412,9 @@ const HomePage = () => {
             </Card>
           </div>
         </motion.section>
+
+        {/* Testimonials Marquee */}
+        <TestimonialsMarquee />
       </main>
       <Footer />
       <BackToTop />

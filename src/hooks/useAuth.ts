@@ -14,9 +14,9 @@ export const useAuth = () => {
       const { data } = await supabase.auth.getSession();
       return data.session;
     },
+    staleTime: Infinity,
   });
 
-  // Sync session changes
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       queryClient.setQueryData(['session'], session);
@@ -27,6 +27,7 @@ export const useAuth = () => {
   const { data: isAdmin, isLoading: roleLoading } = useQuery({
     queryKey: ['is-admin', session?.user?.id],
     enabled: !!session?.user?.id,
+    staleTime: 10 * 60 * 1000,
     queryFn: async () => {
       if (!session?.user?.id) return false;
       
@@ -36,7 +37,7 @@ export const useAuth = () => {
       });
       
       if (error) {
-        console.error('Role check error:', error);
+        if (import.meta.env.DEV) console.error('Role check error:', error);
         return false;
       }
       
@@ -46,20 +47,13 @@ export const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
         const status = (error as any)?.status;
         const msg = error.message || '';
-        if (msg.includes('Email not confirmed')) {
-          throw new Error('Please confirm your email before logging in');
-        }
-        if (msg.includes('Invalid login credentials')) {
-          throw new Error('Invalid email or password');
-        }
+        if (msg.includes('Email not confirmed')) throw new Error('Please confirm your email before logging in');
+        if (msg.includes('Invalid login credentials')) throw new Error('Invalid email or password');
         if (status === 500 || msg.includes('Database error') || msg.includes('unexpected_failure')) {
           throw new Error('Unexpected server error. Please try again shortly.');
         }
@@ -80,13 +74,8 @@ export const useAuth = () => {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      // Clear local cache and storage first
       queryClient.clear();
-      
-      // Then attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut();
-      
-      // Only throw if it's NOT a "session not found" error
       if (error && !error.message?.includes('Session not found') && (error as any)?.status !== 403) {
         throw error;
       }
@@ -95,8 +84,7 @@ export const useAuth = () => {
       toast.success('Logged out successfully');
       navigate('/admin/login');
     },
-    onError: (error: Error) => {
-      // Even on error, redirect to login (user wanted to logout)
+    onError: () => {
       toast.info('Logged out');
       navigate('/admin/login');
     },

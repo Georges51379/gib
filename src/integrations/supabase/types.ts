@@ -460,6 +460,48 @@ export type Database = {
         }
         Relationships: []
       }
+      rescue_requests: {
+        Row: {
+          additional_notes: string | null
+          company: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          problems: Json
+          status: string
+          updated_at: string | null
+          urgency: string
+        }
+        Insert: {
+          additional_notes?: string | null
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          problems?: Json
+          status?: string
+          updated_at?: string | null
+          urgency?: string
+        }
+        Update: {
+          additional_notes?: string | null
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          problems?: Json
+          status?: string
+          updated_at?: string | null
+          urgency?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           default_description: string | null

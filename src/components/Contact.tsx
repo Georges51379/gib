@@ -83,7 +83,7 @@ export const Contact = () => {
             return;
           }
         } catch (error) {
-          console.error("reCAPTCHA verification error:", error);
+          if (import.meta.env.DEV) console.error("reCAPTCHA verification error:", error);
           toast({
             title: "Verification Error",
             description: "Bot verification failed. Please try again.",
@@ -92,18 +92,22 @@ export const Contact = () => {
           return;
         }
       } else {
-        console.warn("reCAPTCHA not available, proceeding without verification");
+        if (import.meta.env.DEV) console.warn("reCAPTCHA not available, proceeding without verification");
       }
 
-      const { error } = await supabase.from("contact_messages").insert([
-        {
-          name: validatedData.name,
-          email: validatedData.email,
-          message: validatedData.message,
+      const { data: result, error } = await supabase.functions.invoke("submit-form", {
+        body: {
+          form_type: "contact",
+          data: {
+            name: validatedData.name,
+            email: validatedData.email,
+            message: validatedData.message,
+          },
         },
-      ]);
+      });
 
       if (error) throw error;
+      if (result?.error) throw new Error(result.error);
 
       toast({
         title: "Message sent!",
@@ -112,7 +116,7 @@ export const Contact = () => {
 
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
-      console.error("Contact form error:", error);
+      if (import.meta.env.DEV) console.error("Contact form error:", error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",

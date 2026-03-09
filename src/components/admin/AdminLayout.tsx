@@ -20,6 +20,7 @@ import {
   Code2,
   Clock,
   BookOpen,
+  LifeBuoy,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
@@ -52,6 +53,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { to: '/admin/future', icon: Lightbulb, label: 'Future Projects' },
     { to: '/admin/tech-stack', icon: Code2, label: 'Tech Stack' },
     { to: '/admin/timeline', icon: Clock, label: 'Skills Timeline' },
+    { to: '/admin/rescue', icon: LifeBuoy, label: 'Rescue Inbox' },
     { to: '/admin/contact', icon: Mail, label: 'Contact Messages' },
     { to: '/admin/testimonials', icon: MessageSquare, label: 'Testimonials' },
     { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },

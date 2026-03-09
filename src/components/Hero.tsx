@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "./ui/skeleton";
 import DOMPurify from "dompurify";
 import { lazy, Suspense } from "react";
+import { TypewriterText } from "./TypewriterText";
 
 const Hero3DScene = lazy(() => import('./Hero3DScene'));
 
@@ -26,6 +27,7 @@ export const Hero = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000,
   });
 
   const handleScroll = (href: string) => {
@@ -101,7 +103,15 @@ export const Hero = () => {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-lg md:text-2xl lg:text-3xl text-white/90 mb-4 font-light max-w-3xl mx-auto"
         >
-          {heroData?.subtitle || "Full-Stack Developer & Data Engineer"}
+          <TypewriterText
+            words={[
+              heroData?.subtitle || "Full-Stack Developer & Data Engineer",
+              "Cloud Architect",
+              "Problem Solver",
+              "Tech Enthusiast",
+            ]}
+            className="text-white/90"
+          />
         </motion.p>
 
         {/* Tagline */}

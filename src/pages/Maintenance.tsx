@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Construction } from 'lucide-react';
+import { SEO } from '@/components/SEO';
 
 export default function Maintenance() {
   const { data: settings } = useQuery({
@@ -16,6 +17,7 @@ export default function Maintenance() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+      <SEO title="Under Maintenance | Georges Boutros" description="Site is under maintenance." noindex />
       <div className="text-center space-y-6 max-w-2xl">
         <Construction className="h-24 w-24 mx-auto text-primary animate-pulse" />
         <h1 className="text-4xl md:text-6xl font-bold">Under Maintenance</h1>

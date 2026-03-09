@@ -216,7 +216,6 @@ export default function HeroEditor() {
               <ImageUploader
                 bucket="site-assets"
                 onUploadComplete={(url) => {
-                  console.log('Video upload complete, URL:', url);
                   setVideoUrl(url || '');
                 }}
                 currentImage={videoUrl || undefined}

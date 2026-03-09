@@ -24,8 +24,10 @@
     <meta name="yandex-verification" content="YOUR_YANDEX_VERIFICATION_CODE" />
     
     <!-- DNS Prefetch & Preconnect for Performance -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" /></noscript>
     <link rel="dns-prefetch" href="https://ypbuuvipagxfjfrhizcs.supabase.co" />
     <link rel="preconnect" href="https://ypbuuvipagxfjfrhizcs.supabase.co" />
     
@@ -150,6 +152,31 @@
     }
     </script>
 
+    <!-- JSON-LD Schema: Organization (Knowledge Panel) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Georges Boutros",
+      "url": "https://gib-two.vercel.app",
+      "logo": "https://gib-two.vercel.app/logo-GIB.png",
+      "founder": {
+        "@type": "Person",
+        "name": "Georges Boutros"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "boutros.georges513@gmail.com",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Arabic", "French"]
+      },
+      "sameAs": [
+        "https://github.com/Georges51379",
+        "https://linkedin.com/in/georges-boutros-534960211"
+      ]
+    }
+    </script>
+
     <!-- JSON-LD Schema: WebSite with SearchAction -->
     <script type="application/ld+json">
     {
@@ -173,6 +200,7 @@
   </head>
 
   <body>
+    <a href="#main-content" class="skip-to-content">Skip to content</a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
@@ -194,7 +222,9 @@
           <ul>
             <li><a href="/about">About Georges Boutros</a></li>
             <li><a href="/projects">Projects Portfolio</a></li>
+            <li><a href="/blog">Blog Articles</a></li>
             <li><a href="/services">Services & Pricing</a></li>
+            <li><a href="/rescue">Quick Rescue</a></li>
             <li><a href="/contact">Contact</a></li>
             <li><a href="/dev-tools">Free Developer Tools</a></li>
           </ul>

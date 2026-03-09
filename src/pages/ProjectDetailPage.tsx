@@ -7,6 +7,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import DOMPurify from "dompurify";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +36,9 @@ import {
   ChevronLeft,
   ChevronRight,
   X as XIcon,
-  ImageIcon
+  ImageIcon,
+  FileText,
+  AlertTriangle
 } from "lucide-react";
 
 const ProjectDetailPage = () => {
@@ -270,6 +273,31 @@ const ProjectDetailPage = () => {
             </div>
           </motion.div>
 
+          {/* Overview / Detailed Description */}
+          {project.detailed_description && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="mb-12"
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-primary" />
+                    Overview
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div 
+                    className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.detailed_description) }}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
           {/* Case Study Sections */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -278,7 +306,7 @@ const ProjectDetailPage = () => {
             className="mb-12"
           >
             <h2 className="text-2xl font-bold mb-6">Case Study</h2>
-            <Accordion type="multiple" defaultValue={["problem", "solution", "features"]} className="space-y-4">
+            <Accordion type="multiple" defaultValue={["problem", "solution", "challenges", "features", "architecture", "security", "results"]} className="space-y-4">
               {/* Problem */}
               {project.problem_statement && (
                 <AccordionItem value="problem" className="border rounded-lg px-4">
@@ -305,6 +333,24 @@ const ProjectDetailPage = () => {
                   </AccordionTrigger>
                   <AccordionContent className="text-muted-foreground pt-2 pb-4">
                     {project.solution_description}
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+
+              {/* Challenges */}
+              {project.challenges && (
+                <AccordionItem value="challenges" className="border rounded-lg px-4">
+                  <AccordionTrigger className="hover:no-underline">
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle className="w-5 h-5 text-primary" />
+                      <span className="font-semibold">Challenges</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground pt-2 pb-4">
+                    <div 
+                      className="prose prose-sm dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.challenges) }}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               )}

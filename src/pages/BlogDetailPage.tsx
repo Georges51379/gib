@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, Clock, Calendar, User } from "lucide-react";
 import { format } from "date-fns";
 import DOMPurify from "dompurify";
+import { BlogTableOfContents } from "@/components/BlogTableOfContents";
 
 interface BlogPost {
   id: string;
@@ -77,6 +78,10 @@ const BlogDetailPage = () => {
 
   const siteUrl = 'https://gib-two.vercel.app';
 
+  const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  const wordCount = post ? stripHtml(post.content).split(/\s+/).filter(Boolean).length : 0;
+  const articleSection = post?.tags?.[0] || 'Technology';
+
   const schema = post ? {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -86,6 +91,10 @@ const BlogDetailPage = () => {
     "image": post.cover_image_url,
     "datePublished": post.created_at,
     "dateModified": post.updated_at,
+    "wordCount": wordCount,
+    "articleSection": articleSection,
+    "articleBody": stripHtml(post.content).substring(0, 500),
+    "inLanguage": "en",
     "author": {
       "@type": "Person",
       "name": post.author || "Georges Boutros",
@@ -153,6 +162,7 @@ const BlogDetailPage = () => {
         breadcrumbs={breadcrumbs}
         publishedTime={post.created_at || undefined}
         modifiedTime={post.updated_at || undefined}
+        articleSection={articleSection}
       />
       <Navbar />
       <main className="pt-24 pb-16">
@@ -210,11 +220,18 @@ const BlogDetailPage = () => {
                 )}
               </div>
 
-              {/* Content */}
-              <div
-                className="project-prose"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
-              />
+              {/* Content with TOC */}
+              <div className="relative">
+                <div className="xl:flex xl:gap-8">
+                  <div
+                    className="project-prose flex-1 min-w-0"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+                  />
+                  <div className="w-56 shrink-0">
+                    <BlogTableOfContents contentHtml={post.content} />
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.article>
 

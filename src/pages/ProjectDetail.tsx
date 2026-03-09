@@ -114,7 +114,7 @@ export const ProjectDetail = () => {
 
   const siteUrl = window.location.origin;
   const projectUrl = `${siteUrl}/project/${project.id}`;
-  const title = `${project.title} - Georges Boutros | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration`;
+  const title = `${project.title} - Georges Boutros | Full-Stack Developer`;
   const description = project.short_description || project.title;
 
   // Structured data for the project

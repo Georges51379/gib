@@ -24,6 +24,7 @@ interface SEOProps {
   publishedTime?: string;
   modifiedTime?: string;
   faqItems?: FAQItem[];
+  articleSection?: string;
 }
 
 export const SEO = ({ 
@@ -40,8 +41,9 @@ export const SEO = ({
   publishedTime,
   modifiedTime,
   faqItems,
+  articleSection,
 }: SEOProps) => {
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://dev-handover-tool.lovable.app';
   const fullCanonical = canonical || window.location.href;
   const fullImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
 
@@ -81,6 +83,7 @@ export const SEO = ({
       {/* Language */}
       <html lang="en" />
       <link rel="alternate" hrefLang="en" href={fullCanonical} />
+      <link rel="alternate" hrefLang="x-default" href={fullCanonical} />
       
       {/* Geographic Targeting */}
       <meta name="geo.region" content="LB" />
@@ -113,9 +116,11 @@ export const SEO = ({
       <meta property="og:site_name" content="Georges Boutros Portfolio" />
       <meta property="og:locale" content="en_US" />
       
-      {/* Article timestamps */}
+      {/* Article timestamps & metadata */}
       {publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+      {type === 'article' && <meta property="article:author" content={author} />}
+      {type === 'article' && articleSection && <meta property="article:section" content={articleSection} />}
       
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />

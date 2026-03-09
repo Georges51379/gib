@@ -44,6 +44,7 @@ export default function BlogManager() {
   const [tags, setTags] = useState('');
   const [featured, setFeatured] = useState(false);
   const [readingTime, setReadingTime] = useState('5');
+  const [author, setAuthor] = useState('Georges Boutros');
 
   const { data: posts } = useQuery({
     queryKey: ['blog-posts-admin'],
@@ -67,6 +68,7 @@ export default function BlogManager() {
     setTags('');
     setFeatured(false);
     setReadingTime('5');
+    setAuthor('Georges Boutros');
   };
 
   const generateSlug = (text: string) =>
@@ -87,6 +89,7 @@ export default function BlogManager() {
     setTags(post.tags?.join(', ') || '');
     setFeatured(post.featured || false);
     setReadingTime(String(post.reading_time_minutes || 5));
+    setAuthor(post.author || 'Georges Boutros');
     setIsOpen(true);
   };
 
@@ -106,6 +109,7 @@ export default function BlogManager() {
         tags: tagsArray,
         featured,
         reading_time_minutes: parseInt(readingTime) || 5,
+        author: author.trim() || 'Georges Boutros',
       };
 
       if (editingId) {
@@ -186,6 +190,10 @@ export default function BlogManager() {
                   </div>
                 </div>
                 <div className="space-y-2">
+                  <Label>Author</Label>
+                  <Input value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Georges Boutros" />
+                </div>
+                <div className="space-y-2">
                   <Label>Excerpt</Label>
                   <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={3} placeholder="Brief summary of the article..." />
                 </div>
@@ -234,6 +242,9 @@ export default function BlogManager() {
                   </div>
                 </CardTitle>
                 <CardDescription className="line-clamp-2">{post.excerpt}</CardDescription>
+                {post.author && (
+                  <p className="text-xs text-muted-foreground mt-1">by {post.author}</p>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="flex gap-2">

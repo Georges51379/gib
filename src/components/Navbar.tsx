@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { Menu, X, Moon, Sun, Home, User, Briefcase, DollarSign, Mail, Github, Linkedin, Twitter, Wrench, BookOpen } from "lucide-react";
+import { Menu, X, Moon, Sun, Home, User, Briefcase, DollarSign, Mail, Github, Linkedin, Twitter, Wrench, BookOpen, LifeBuoy } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useSmartTheme } from "@/hooks/useSmartTheme";
+import { useCircularReveal } from "@/hooks/useCircularReveal";
 
 interface NavLink {
   name: string;
@@ -18,6 +19,7 @@ const navLinks: NavLink[] = [
   { name: "Projects", href: "/projects", icon: Briefcase },
   { name: "Blog", href: "/blog", icon: BookOpen },
   { name: "Services", href: "/services", icon: DollarSign },
+  { name: "Rescue", href: "/rescue", icon: LifeBuoy },
   { name: "Contact", href: "/contact", icon: Mail },
   { name: "Dev Tools", href: "/dev-tools", icon: Wrench },
 ];
@@ -35,6 +37,7 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isDark: isDarkMode, toggleTheme } = useSmartTheme();
+  const circularToggle = useCircularReveal(toggleTheme);
 
   const logoText = settings?.logo_url 
     ? null 
@@ -97,7 +100,7 @@ export const Navbar = () => {
             {/* Logo */}
             <motion.a 
               href="/" 
-              className="flex items-center space-x-2 text-xl md:text-2xl font-bold gradient-text cursor-pointer"
+              className={`flex items-center space-x-2 text-xl md:text-2xl font-bold cursor-pointer ${isScrolled ? 'gradient-text' : 'text-white'}`}
               onClick={handleLogoClick}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -122,7 +125,7 @@ export const Navbar = () => {
                   className={`px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md relative flex items-center gap-1.5 ${
                     isActiveRoute(link.href) 
                       ? "text-primary" 
-                      : "text-foreground hover:text-primary"
+                      : isScrolled ? "text-foreground hover:text-primary" : "text-white/90 hover:text-white"
                   }`}
                 >
                   {link.name === "Dev Tools" && <Wrench className="w-4 h-4" />}
@@ -143,9 +146,9 @@ export const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={toggleTheme}
+                onClick={(e) => circularToggle(e)}
                 aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-                className="transition-transform hover:scale-110 min-h-[44px] min-w-[44px]"
+                className={`transition-transform hover:scale-110 min-h-[44px] min-w-[44px] ${isScrolled ? 'text-foreground' : 'text-white'}`}
               >
                 <motion.div
                   initial={false}
@@ -163,7 +166,7 @@ export const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden relative min-w-[44px] min-h-[44px] text-foreground hover:text-primary"
+                className={`lg:hidden relative min-w-[44px] min-h-[44px] ${isScrolled ? 'text-foreground hover:text-primary' : 'text-white hover:text-white/80'}`}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >

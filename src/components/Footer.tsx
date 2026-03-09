@@ -66,7 +66,7 @@ export const Footer = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <p>© {currentYear} || Georges Boutros. All rights reserved.</p>
+            <p>© {currentYear} {settings?.site_title || "Georges Boutros"}. All rights reserved.</p>
           </motion.div>
         </div>
       </div>

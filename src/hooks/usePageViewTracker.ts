@@ -20,6 +20,8 @@ const getBrowserName = (): string => {
   return 'Unknown';
 };
 
+const GEO_CACHE_KEY = 'geo_cache';
+
 const getGeolocation = async (): Promise<{
   country: string;
   countryCode: string;
@@ -29,11 +31,17 @@ const getGeolocation = async (): Promise<{
   lon: number;
 } | null> => {
   try {
-    const { data, error } = await supabase.functions.invoke('get-geolocation');
-    if (error) {
-      console.error('Geolocation error:', error);
-      return null;
+    // Check sessionStorage cache first
+    const cached = sessionStorage.getItem(GEO_CACHE_KEY);
+    if (cached) {
+      return JSON.parse(cached);
     }
+
+    const { data, error } = await supabase.functions.invoke('get-geolocation');
+    if (error) return null;
+
+    // Cache for the session
+    sessionStorage.setItem(GEO_CACHE_KEY, JSON.stringify(data));
     return data;
   } catch {
     return null;
@@ -44,12 +52,10 @@ export const usePageViewTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Don't track admin routes
     if (location.pathname.startsWith('/admin')) return;
 
     const trackPageView = async () => {
       try {
-        // Get geolocation data
         const geoData = await getGeolocation();
 
         const eventData = {
@@ -58,7 +64,6 @@ export const usePageViewTracker = () => {
           screen_width: window.innerWidth,
           screen_height: window.innerHeight,
           language: navigator.language,
-          // Add geolocation data
           country: geoData?.country || 'Unknown',
           country_code: geoData?.countryCode || 'XX',
           region: geoData?.region || 'Unknown',
@@ -74,9 +79,8 @@ export const usePageViewTracker = () => {
           user_agent: navigator.userAgent,
           event_data: eventData,
         });
-      } catch (error) {
-        // Silently fail - analytics shouldn't break the app
-        console.error('Failed to track page view:', error);
+      } catch {
+        // Silently fail — analytics shouldn't break the app
       }
     };
 

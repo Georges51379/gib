@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Clock, Calendar, Star, BookOpen, ArrowRight } from "lucide-react";
+import { Search, Clock, Calendar, Star, BookOpen, ArrowRight, User } from "lucide-react";
 import { format } from "date-fns";
 
 interface BlogPost {
@@ -119,7 +119,13 @@ const BlogPage = () => {
       </div>
       <CardContent className="p-6">
         {/* Meta */}
-        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3 flex-wrap">
+          {post.author && (
+            <span className="flex items-center gap-1">
+              <User className="w-3 h-3" />
+              {post.author}
+            </span>
+          )}
           {post.created_at && (
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
