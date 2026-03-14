@@ -43,7 +43,7 @@ export const SEO = ({
   faqItems,
   articleSection,
 }: SEOProps) => {
-  const siteUrl = 'https://dev-handover-tool.lovable.app';
+  const siteUrl = 'https://georgesbuilds.dev';
   const fullCanonical = canonical || window.location.href;
   const fullImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
 

@@ -21,7 +21,7 @@ const ServicesPage = () => {
     },
   });
 
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://georgesbuilds.dev';
   const title = "Web Development Services & Pricing in Lebanon | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration | Georges Boutros";
   const description = "Professional web development and data engineering services from Lebanon. Full-stack applications, cloud solutions, and enterprise software. Transparent pricing.";
 

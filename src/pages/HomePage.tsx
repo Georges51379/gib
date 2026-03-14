@@ -40,7 +40,7 @@ const faqItems = [
   }
 ];
 
-const siteUrl = 'https://gib-two.vercel.app';
+const siteUrl = 'https://georgesbuilds.dev';
 
 const HomePage = () => {
   const { data: heroData } = useQuery({

@@ -1,86 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://gib-two.vercel.app/</loc>
+    <loc>https://georgesbuilds.dev/</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/about</loc>
+    <loc>https://georgesbuilds.dev/about</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/projects</loc>
+    <loc>https://georgesbuilds.dev/projects</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/blog</loc>
+    <loc>https://georgesbuilds.dev/blog</loc>
     <lastmod>2026-03-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/services</loc>
+    <loc>https://georgesbuilds.dev/services</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/contact</loc>
+    <loc>https://georgesboutros.com/rescue</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://georgesbuilds.dev/contact</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/dev-tools</loc>
+    <loc>https://georgesbuilds.dev/dev-tools</loc>
     <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- Project Detail Pages -->
   <url>
-    <loc>https://gib-two.vercel.app/projects/to-do-list-</loc>
+    <loc>https://georgesbuilds.dev/projects/to-do-list-</loc>
     <lastmod>2025-10-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/projects/car-dealer-shop</loc>
+    <loc>https://georgesbuilds.dev/projects/car-dealer-shop</loc>
     <lastmod>2025-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/projects/coffee-shop-website</loc>
+    <loc>https://georgesbuilds.dev/projects/coffee-shop-website</loc>
     <lastmod>2025-11-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/projects/prank-website</loc>
+    <loc>https://georgesbuilds.dev/projects/prank-website</loc>
     <lastmod>2025-11-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/projects/gym-website</loc>
+    <loc>https://georgesbuilds.dev/projects/gym-website</loc>
     <lastmod>2025-11-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/projects/ciel-website</loc>
+    <loc>https://georgesbuilds.dev/projects/ciel-website</loc>
     <lastmod>2026-01-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gib-two.vercel.app/projects/e-clothing-website</loc>
+    <loc>https://georgesbuilds.dev/projects/e-clothing-website</loc>
     <lastmod>2025-11-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

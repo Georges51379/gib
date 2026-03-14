@@ -6,7 +6,7 @@ const corsHeaders = {
   'Content-Type': 'application/xml',
 };
 
-const SITE_URL = 'https://gib-two.vercel.app';
+const SITE_URL = 'https://georgesbuilds.dev';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {

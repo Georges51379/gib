@@ -160,24 +160,24 @@ const RescuePage = () => {
         title="Quick Rescue | Georges Boutros - Get Help With Your Technical Problems"
         description="Facing a technical challenge? Submit your problem and get expert help from Georges Boutros. Quick response for urgent web development and data engineering issues."
         keywords="technical help, web development rescue, urgent developer help, Georges Boutros, Lebanon developer"
-        canonical="https://gib-two.vercel.app/rescue"
+        canonical="https://georgesbuilds.dev/rescue"
         breadcrumbs={[
-          { name: "Home", url: "https://gib-two.vercel.app" },
-          { name: "Quick Rescue", url: "https://gib-two.vercel.app/rescue" }
+          { name: "Home", url: "https://georgesbuilds.dev" },
+          { name: "Quick Rescue", url: "https://georgesbuilds.dev/rescue" }
         ]}
         schema={{
           "@context": "https://schema.org",
           "@type": "ContactPage",
           "name": "Quick Rescue - Technical Problem Submission",
           "description": "Submit your technical problems for expert review and fast resolution by Georges Boutros.",
-          "url": "https://gib-two.vercel.app/rescue",
+          "url": "https://georgesbuilds.dev/rescue",
           "mainEntity": {
             "@type": "Service",
             "serviceType": "Technical Rescue",
             "provider": {
               "@type": "Person",
               "name": "Georges Boutros",
-              "url": "https://gib-two.vercel.app"
+              "url": "https://georgesbuilds.dev"
             },
             "areaServed": { "@type": "Place", "name": "Worldwide" },
             "description": "Quick technical rescue service for urgent web development and data engineering problems."

@@ -111,7 +111,7 @@ const ProjectDetailPage = () => {
   const prevProject = currentIndex > 0 ? allProjects?.[currentIndex - 1] : null;
   const nextProject = currentIndex < (allProjects?.length ?? 0) - 1 ? allProjects?.[currentIndex + 1] : null;
 
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://georgesbuilds.dev';
   const title = project ? `${project.title} | Case Study - Georges Boutros` : "Project | Georges Boutros";
   const description = project?.short_description || "View the full case study for this project.";
 

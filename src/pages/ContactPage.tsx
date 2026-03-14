@@ -5,7 +5,7 @@ import { BackToTop } from "@/components/BackToTop";
 import { SEO } from "@/components/SEO";
 
 const ContactPage = () => {
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://georgesbuilds.dev';
   const title = "Contact Georges Boutros | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration | Hire a Developer in Lebanon";
   const description = "Get in touch with Georges Boutros, Full-Stack Developer & Data Engineer in Lebanon. Available for freelance projects, contract work, and remote collaboration worldwide.";
 

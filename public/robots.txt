@@ -29,5 +29,5 @@ User-agent: DotBot
 Disallow: /
 
 # Sitemaps
-Sitemap: https://gib-two.vercel.app/sitemap.xml
+Sitemap: https://georgesbuilds.dev/sitemap.xml
 Sitemap: https://ypbuuvipagxfjfrhizcs.supabase.co/functions/v1/generate-sitemap

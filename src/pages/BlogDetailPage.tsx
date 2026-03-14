@@ -76,7 +76,7 @@ const BlogDetailPage = () => {
   const prevPost = currentIndex > 0 ? allPosts?.[currentIndex - 1] : null;
   const nextPost = currentIndex < (allPosts?.length ?? 0) - 1 ? allPosts?.[currentIndex + 1] : null;
 
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://georgesbuilds.dev';
 
   const stripHtml = (html: string) => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
   const wordCount = post ? stripHtml(post.content).split(/\s+/).filter(Boolean).length : 0;

@@ -16,7 +16,7 @@ const DevTools = () => {
     ? devTools 
     : devTools.filter(tool => tool.category === activeCategory);
 
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://georgesbuilds.dev';
 
   const schema = {
     "@context": "https://schema.org",

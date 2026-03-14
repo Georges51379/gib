@@ -79,7 +79,7 @@ const ProjectsPage = () => {
   const featuredProjects = filteredProjects.filter(p => p.featured);
   const regularProjects = filteredProjects.filter(p => !p.featured);
 
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://georgesbuilds.dev';
   const title = "Projects Portfolio | Georges Boutros | Full Stack Developer & Data Engineer | React, Supabase, Enterprise Systems, Payment API Integration - Case Studies";
   const description = "Explore my portfolio of full-stack web applications, data engineering projects, and enterprise solutions built with React, Node.js, Python, and cloud technologies.";
 

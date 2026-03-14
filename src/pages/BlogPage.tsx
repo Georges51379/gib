@@ -69,7 +69,7 @@ const BlogPage = () => {
   const featuredPosts = filteredPosts.filter(p => p.featured);
   const regularPosts = filteredPosts.filter(p => !p.featured);
 
-  const siteUrl = 'https://gib-two.vercel.app';
+  const siteUrl = 'https://georgesbuilds.dev';
 
   const schema = {
     "@context": "https://schema.org",
