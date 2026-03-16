@@ -51,10 +51,9 @@ export const Hero = () => {
 
   return (
     <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Gradient Overlay */}
+      
       <div className="absolute inset-0 z-[1] bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 animate-pulse" style={{ animationDuration: '8s' }} />
       
-      {/* Background Video with Parallax */}
       <motion.div 
         className="absolute inset-0 z-0"
         style={{ y }}
@@ -73,17 +72,19 @@ export const Hero = () => {
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 bg-[hsl(var(--hero-overlay))]" style={{ opacity: heroData?.background_overlay_opacity || 0.7 }} />
+
+        <div 
+          className="absolute inset-0 bg-[hsl(var(--hero-overlay))]" 
+          style={{ opacity: heroData?.background_overlay_opacity || 0.7 }} 
+        />
       </motion.div>
 
-      {/* 3D Scene Layer */}
       <Suspense fallback={null}>
         <div className="absolute inset-0 z-[2]">
           <Hero3DScene />
         </div>
       </Suspense>
 
-      {/* Content */}
       <motion.div 
         className="relative z-10 container-custom text-center"
         style={{ opacity }}
@@ -114,19 +115,17 @@ export const Hero = () => {
           />
         </motion.p>
 
-        {/* Tagline */}
         {heroData?.tagline && (
           <motion.p 
             initial={fadeInUp.initial}
             animate={fadeInUp.animate}
             transition={{ delay: 0.25, duration: 0.6 }}
-            className="text-base md:text-lg text-white/70 mb-6 max-w-2xl mx-auto italic"
+            className="text-base md:text-lg text-white/80 mb-6 max-w-2xl mx-auto italic"
           >
             {heroData.tagline}
           </motion.p>
         )}
 
-        {/* Trust Badges */}
         {heroData?.trust_badges && heroData.trust_badges.length > 0 && (
           <motion.div 
             initial={fadeInUp.initial}
@@ -140,7 +139,7 @@ export const Hero = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + index * 0.1 }}
-                className="px-3 py-1.5 text-sm font-medium bg-primary/20 text-primary border border-primary/30 rounded-full backdrop-blur-sm"
+                className="px-3 py-1.5 text-sm font-medium bg-primary/20 text-white border border-primary/30 rounded-full backdrop-blur-sm"
               >
                 {badge}
               </motion.span>
@@ -152,7 +151,7 @@ export const Hero = () => {
           initial={fadeInUp.initial}
           animate={fadeInUp.animate}
           transition={{ delay: 0.35, duration: 0.6 }}
-          className="text-base md:text-lg lg:text-xl text-white/80 mb-12 max-w-2xl mx-auto prose prose-invert max-w-none"
+          className="text-base md:text-lg lg:text-xl text-white/90 mb-12 max-w-2xl mx-auto prose prose-invert max-w-none"
           dangerouslySetInnerHTML={{ 
             __html: DOMPurify.sanitize(heroData?.description || "Building innovative solutions with modern technologies") 
           }}
@@ -164,38 +163,31 @@ export const Hero = () => {
           transition={{ delay: 0.45, duration: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               size="lg"
               className="gradient-bg text-white font-semibold px-8 py-6 text-lg hover:opacity-90 transition-smooth relative overflow-hidden group"
-              onClick={() => handleScroll("#projects")}
+              onClick={() => window.location.href = "/projects"}
             >
-              <span className="relative z-10">{heroData?.cta_primary_text || "See My Work"}</span>
+              <span className="relative z-10">{heroData?.cta_primary_text || "View Case Studies"}</span>
               <div className="absolute inset-0 bg-gradient-to-r from-primary-hover to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Button>
           </motion.div>
           
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               size="lg"
               variant="outline"
               className="border-2 border-primary dark:border-white text-primary dark:text-white hover:bg-primary/10 dark:hover:bg-white/10 hover:text-primary dark:hover:text-white font-semibold px-8 py-6 text-lg transition-smooth backdrop-blur-sm relative overflow-hidden group"
-              onClick={() => handleScroll("#contact")}
+              onClick={() => window.location.href = "/contact"}
             >
-              <span className="relative z-10">{heroData?.cta_secondary_text || "Contact Me"}</span>
+              <span className="relative z-10">{heroData?.cta_secondary_text || "Work With Me"}</span>
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Button>
           </motion.div>
         </motion.div>
       </motion.div>
 
-      {/* Scroll Indicator */}
       <motion.div 
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         animate={{ y: [0, 10, 0] }}
