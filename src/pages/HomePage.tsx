@@ -36,7 +36,7 @@ const faqItems = [
   },
   {
     question: "How can I hire Georges Boutros?",
-    answer: "You can hire Georges Boutros by visiting the contact page at dev-handover-tool.lovable.app/contact or by emailing boutros.georges513@gmail.com. He is available for freelance projects, contract work, and long-term engagements."
+    answer: "You can hire Georges Boutros by visiting the contact page at georgesbuilds.dev/contact or by emailing boutros.georges513@gmail.com. He is available for freelance projects, contract work, and long-term engagements."
   }
 ];
 
@@ -71,6 +71,22 @@ const HomePage = () => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  const { data: futureProjects } = useQuery({
+  queryKey: ['future-projects'],
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from('future_projects')
+      .select('id, title, description, features, icon_name, project_status')
+      .eq('status', 'future')
+      .order('display_order', { ascending: true })
+      .limit(3);
+
+    if (error) throw error;
+    return data;
+  },
+  staleTime: 5 * 60 * 1000,
+});
 
   const { data: latestPosts } = useQuery({
     queryKey: ['latest-blog-posts'],
@@ -217,6 +233,65 @@ const HomePage = () => {
             </div>
           </div>
         </motion.section>
+
+        {/* Future Projects */}
+{futureProjects && futureProjects.length > 0 && (
+  <motion.section
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, margin: "-100px" }}
+    variants={sectionVariants}
+    className="section-padding"
+  >
+    <div className="container-custom">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <Clock className="w-6 h-6 text-primary" />
+          <h2 className="text-3xl font-bold">Future Projects</h2>
+        </div>
+
+        <Button asChild variant="outline">
+          <Link to="/projects" className="flex items-center gap-2">
+            View Roadmap
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </Button>
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {futureProjects.map((project) => (
+          <Card
+            key={project.id}
+            className="group overflow-hidden border-dashed border-primary/40 hover:shadow-lg transition-all duration-300"
+          >
+
+            <CardHeader>
+              <div className="flex items-center gap-2 mb-2">
+                <Badge variant="secondary">Coming Soon</Badge>
+              </div>
+
+              <CardTitle className="text-lg">
+                {project.title}
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                {project.description}
+              </p>
+
+              <Button asChild size="sm" variant="outline" className="w-full">
+                <Link to={`/projects/${project.id}`}>
+                  View Concept
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  </motion.section>
+)}
 
         {/* About Preview */}
         <motion.section
