@@ -282,7 +282,7 @@ const SkillsTimelineManager = () => {
                         <SelectValue placeholder="Select month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No specific month</SelectItem>
+                        <SelectItem value="none">No specific month</SelectItem>
                         {months.map((month) => (
                           <SelectItem key={month} value={month}>
                             {month}
